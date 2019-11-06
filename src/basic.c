@@ -10,6 +10,10 @@ struct NUMBER
   int n[KETA];
   int sign;
 };
+uint64_t xorshift_x;
+uint64_t xorshift_y;
+uint64_t xorshift_z;
+uint64_t xorshift_w;
 
 void clearByZero(struct NUMBER *);
 void dispNumber(struct NUMBER *);
@@ -18,47 +22,58 @@ void copyNumber(struct NUMBER *, struct NUMBER *);
 void getAbs(struct NUMBER *, struct NUMBER *);
 int isZero(struct NUMBER *);
 int mulBy10(struct NUMBER *, struct NUMBER *);
-uint32_t xorshift();
+/*xorshift_function*/
+void xorshiftInit(int);
+uint64_t rol64(uint64_t, int);
+uint64_t xorshift();
+
 
 int main(int argc, char *argv[])
 {
   struct NUMBER a;
   struct NUMBER b;
+  /*init random fanction*/
   srandom(time(NULL));
-  //RAND_priv_bytes(time(NULL));
+  xorshiftInit(random() % 10000000000);
+  xorshift();
+  xorshift();
+  xorshift();
+  xorshift();
 
-  printf("a = ");
+  printf("1:a = ");
   dispNumber(&a);
   printf("\n");
 
+  /*init structure*/
   clearByZero(&a);
 
-  printf("a = ");
+  printf("2:a = ");
   dispNumber(&a);
   printf("\n");
 
+  /*set random number*/
   setRnd(&a, KETA);
 
-  printf("a = ");
+  printf("3:a = ");
   dispNumber(&a);
   printf("\n");
 
+  /*copy Number*/
   copyNumber(&a, &b);
-  a.sign = (a.sign + 1) % 2;
 
-  printf("a = ");
+  printf("4:a = ");
   dispNumber(&a);
   printf("\n");
 
-  copyNumber(&a, &b);
-
-  printf("b = ");
+  printf("5:b = ");
   dispNumber(&b);
   printf("\n");
 
+  /*check n is Zero*/
   setRnd(&a, KETA);
   printf("%d\n", isZero(&a));
 
+  /* left shift*/
   printf("%d\n", mulBy10(&a, &b));
   printf("a = ");
   dispNumber(&a);
@@ -85,11 +100,11 @@ void dispNumber(struct NUMBER *a)
   int i;
   if (a->sign == 1)
   {
-    printf(" + ");
+    printf("+");
   }
   else
   {
-    printf(" - ");
+    printf("-");
   }
   for (i = 0; i < KETA; i++)
   {
@@ -138,7 +153,7 @@ int isZero(struct NUMBER *a)
 
 int mulBy10(struct NUMBER *a, struct NUMBER *b)
 {
-  int flag = 0, i;
+  int i;
   for (i = 0; i < KETA - 1; i++)
   {
     b->n[i] = a->n[i + 1];
@@ -153,44 +168,42 @@ int mulBy10(struct NUMBER *a, struct NUMBER *b)
     return 0;
   }
 }
-uint32_t xorshift()
-{
-  static uint32_t x = 123456789;
-  static uint32_t y = 362436069;
-  static uint32_t z = 521288629;
-  uint32_t w = random() % 10000000;
-  uint32_t t;
-  t = x ^ (x << 11);
-  x = y;
-  y = z;
-  z = w;
-  w ^= t ^ (t >> 8) ^ (w >> 19);
-  return w;
+
+/*xorshift_function*/
+void xorshiftInit(int seed){
+  seed = seed + 0x9E3779B97f4A7C15;
+  seed = (seed ^ (seed) >> 30) * 0xBF58476D1CE4E5B9;
+  seed = (seed ^ (seed >> 27)) * 0x94D049BB133111EB;
+  seed = seed ^ (seed >> 31);
+  xorshift_x = seed;
+  xorshift_y = seed >> 6;
+  seed = seed + 0x9FFFFFFFFFFFFFFF;
+  seed = (seed ^ (seed) >> 30) * 0xBF58476D1CE4E5B9;
+  seed = (seed ^ (seed >> 28)) * 0x94D049BB133111EB;
+  seed = seed ^ (seed >> 31);
+  xorshift_z = seed;
+  xorshift_w = seed >> 6;
+  printf("x y z w : %lld %lld %lld %lld\n", xorshift_x, xorshift_y, xorshift_z, xorshift_w);
 }
 
-/*uint64_t rol64(uint64_t x, int k)
+uint64_t rol64(uint64_t x, int k)
 {
   return (x << k) | (x >> (64 - k));
 }
 
-struct xoshiro256ss_state
+uint64_t xorshift()
 {
-  uint64_t s[4];
-};
-
-uint64_t xoshiro256ss(struct xoshiro256ss_state *state)
-{
-  uint64_t(*s)[4] = &state->s;
-  uint64_t const result = rol64(*s[1] * 5, 7) * 9;
-  uint64_t const t = *s[1] << 17;
-
-  *s[2] ^= *s[0];
-  *s[3] ^= *s[1];
-  *s[1] ^= *s[2];
-  *s[0] ^= *s[3];
-
-  s[2] ^= t;
-  s[3] = rol64(s[3], 45);
-
+  uint64_t result = rol64(xorshift_y * 5, 7) * 9;
+  uint64_t t;
+  t = xorshift_x ^ (xorshift_x << 17);
+  //t = xorshift_x << 17;
+  xorshift_z ^= xorshift_x;
+  xorshift_w ^= xorshift_y;
+  xorshift_y ^= xorshift_z;
+  xorshift_x ^= xorshift_w;
+  xorshift_z ^= t;
+  //w ^= t ^ (t >> 8) ^ (w >> 19);
+  xorshift_w = rol64(xorshift_w, random() % 5 + 40);
+  //printf("result = %lld\n", result);
   return result;
-} */
+}
