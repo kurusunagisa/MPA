@@ -27,7 +27,6 @@ void xorshiftInit(int);
 uint64_t rol64(uint64_t, int);
 uint64_t xorshift();
 
-
 int main(int argc, char *argv[])
 {
   struct NUMBER a;
@@ -35,10 +34,10 @@ int main(int argc, char *argv[])
   /*init random fanction*/
   srandom(time(NULL));
   xorshiftInit(random() % 10000000000);
+  /*xorshift();
   xorshift();
   xorshift();
-  xorshift();
-  xorshift();
+  xorshift();*/
 
   printf("1:a = ");
   dispNumber(&a);
@@ -158,6 +157,7 @@ int mulBy10(struct NUMBER *a, struct NUMBER *b)
   {
     b->n[i] = a->n[i + 1];
   }
+  b->sign = a->sign;
   b->n[KETA - 1] = 0;
   if (a->n[0] != 0)
   {
@@ -170,7 +170,8 @@ int mulBy10(struct NUMBER *a, struct NUMBER *b)
 }
 
 /*xorshift_function*/
-void xorshiftInit(int seed){
+void xorshiftInit(int seed)
+{
   seed = seed + 0x9E3779B97f4A7C15;
   seed = (seed ^ (seed) >> 30) * 0xBF58476D1CE4E5B9;
   seed = (seed ^ (seed >> 27)) * 0x94D049BB133111EB;
@@ -193,7 +194,7 @@ uint64_t rol64(uint64_t x, int k)
 
 uint64_t xorshift()
 {
-  uint64_t result = rol64(xorshift_y * 5, 7) * 9;
+  uint64_t result = rol64(xorshift_y * 5, 7) * 9 + random() % 9 + 1;
   uint64_t t;
   t = xorshift_x ^ (xorshift_x << 17);
   //t = xorshift_x << 17;
@@ -203,7 +204,7 @@ uint64_t xorshift()
   xorshift_x ^= xorshift_w;
   xorshift_z ^= t;
   //w ^= t ^ (t >> 8) ^ (w >> 19);
-  xorshift_w = rol64(xorshift_w, random() % 5 + 40);
+  xorshift_w = rol64(xorshift_w, 45);
   //printf("result = %lld\n", result);
   return result;
 }
