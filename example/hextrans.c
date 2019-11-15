@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-    float x = -12.3456;
+    int x = -123456;
     unsigned char *p;
 
     p = (unsigned char *)&x;
