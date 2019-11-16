@@ -1,28 +1,18 @@
 #include "mulprec.h"
 
-void clearByZero(struct NUMBER *a)
-{
-  int i;
-
-  for (i = 0; i < KETA; i++)
-  {
-    a->n[i] = 0;
-  }
-  a->sign = 1;
-}
 
 void dispNumber(struct NUMBER *a)
 {
   int i;
-  if (a->sign == 1)
+  if (getSign(a) == +1)
   {
     printf("+");
   }
-  else
+  if (getSign(a) == -1)
   {
     printf("-");
   }
-  for (i = 0; i < KETA; i++)
+  for (i = KETA - 1; i >= 0; i--)
   {
     printf("%2d", a->n[i]);
   }
@@ -31,46 +21,18 @@ void dispNumber(struct NUMBER *a)
 void fdispNumber(struct NUMBER *a, FILE *FP)
 {
   int i;
-  if (a->sign == 1)
+  if (getSign(a) == +1)
   {
     fprintf(FP, "+");
   }
-  else
+  if (getSign(a) == -1)
   {
     fprintf(FP, "-");
   }
-  for (i = 0; i < KETA; i++)
+  for (i = KETA - 1; i >= 0; i--)
   {
     fprintf(FP, "%d", a->n[i]);
   }
-}
-
-void setRnd(struct NUMBER *a, int k)
-{
-  int i = 0;
-  for (i = KETA - k; i < KETA; i++)
-  {
-    a->n[i] = xorshift() % 10;
-    //a->n[i] = pcg32() % 10;
-  }
-  a->sign = xorshift() % 2;
-  //a->sign = pcg32() % 2;
-}
-
-void copyNumber(struct NUMBER *a, struct NUMBER *b)
-{
-  int i;
-  for (i = 0; i < KETA; i++)
-  {
-    b->n[i] = a->n[i];
-  }
-  b->sign = a->sign;
-}
-
-void getAbs(struct NUMBER *a, struct NUMBER *b)
-{
-  copyNumber(a, b);
-  b->sign = +1;
 }
 
 int isZero(struct NUMBER *a)
@@ -86,15 +48,131 @@ int isZero(struct NUMBER *a)
   return 0;
 }
 
+void clearByZero(struct NUMBER *a)
+{
+  int i;
+
+  for (i = 0; i < KETA; i++)
+  {
+    a->n[i] = 0;
+  }
+  setSign(a, +1);
+}
+
+void setRnd(struct NUMBER *a, int k)
+{
+  int i = 0;
+  for (i = 0; i < KETA; i++)
+  {
+    a->n[i] = xorshift() % 10;
+    //a->n[i] = pcg32() % 10;
+  }
+  setSign(a, (xorshift() % 2 == 0) ? -1 : +1);
+  //a->sign = pcg32() % 2;
+}
+
+void copyNumber(struct NUMBER *a, struct NUMBER *b)
+{
+  int i;
+  for (i = 0; i < KETA; i++)
+  {
+    b->n[i] = a->n[i];
+  }
+  setSign(b, getSign(a));
+}
+
+void getAbs(struct NUMBER *a, struct NUMBER *b)
+{
+  copyNumber(a, b);
+  setSign(a, +1);
+}
+
+int setSign(struct NUMBER *a, int s)
+{
+  if (s == +1)
+    a->sign = +1;
+  else if (s == -1)
+    a->sign = -1;
+  else
+    return -1;
+  return 0;
+}
+
+int getSign(struct NUMBER *a)
+{
+  return a->sign == +1 ? +1 : -1;
+}
+
+int numComp(struct NUMBER *a, struct NUMBER *b)
+{
+  int i;
+  if (getSign(a) != getSign(b))
+  {
+    return getSign(a) > getSign(b) ? 1 : -1;
+  }
+  if (getSign(a) == +1)
+  {
+    for (i = 0; i < KETA; i++)
+    {
+      if (a->n[i] > b->n[i])
+      {
+        return 1;
+      }
+      if (a->n[i] < b->n[i])
+      {
+        return -1;
+      }
+    }
+    return 0;
+  }
+  if (getSign(a) == -1)
+  {
+    for (i = 0; i < KETA; i++)
+    {
+      if (a->n[i] < b->n[i])
+      {
+        return 1;
+      }
+      if (a->n[i] > b->n[i])
+      {
+        return -1;
+      }
+    }
+    return 0;
+  }
+  return -10000;
+}
+
+void swap(struct NUMBER *a, struct NUMBER *b)
+{
+  struct NUMBER c;
+  int i;
+  for (i = 0; i < KETA; i++)
+  {
+    c.n[i] = a->n[i];
+  }
+  setSign(&c, a->sign);
+  for (i = 0; i < KETA; i++)
+  {
+    a->n[i] = b->n[i];
+  }
+  setSign(a, b->sign);
+  for (i = 0; i < KETA; i++)
+  {
+    b->n[i] = c.n[i];
+  }
+  setSign(b, c.sign);
+}
+
 int mulBy10(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
-  for (i = 0; i < KETA - 1; i++)
+  for (i = 0; i < KETA; i++)
   {
-    b->n[i] = a->n[i + 1];
+    b->n[i + 1] = a->n[i];
   }
-  b->sign = a->sign;
-  b->n[KETA - 1] = 0;
+  setSign(b, getSign(a));
+  b->n[0] = 0;
   if (a->n[0] != 0)
   {
     return -1;
@@ -110,10 +188,10 @@ int divBy10(struct NUMBER *a, struct NUMBER *b)
   int i;
   for (i = 0; i < KETA; i++)
   {
-    b->n[i] = a->n[i - 1];
+    b->n[i] = a->n[i + 1];
   }
-  b->sign = a->sign;
-  b->n[0] = 0;
+  setSign(b, getSign(a));
+  b->n[KETA - 1] = 0;
   if (a->n[KETA - 1] != 0)
   {
     return -1;
@@ -129,14 +207,14 @@ int setInt(struct NUMBER *a, int x)
   int i = 0;
   if (x < 0)
   {
-    a->sign = -1;
+    setSign(a, -1);
     x -= x * 2;
   }
   else
   {
-    a->sign = 1;
+    setSign(a, +1);
   }
-  for (i = KETA - 1; i >= 0; i--)
+  for (i = 0; i < KETA; i++)
   {
     a->n[i] = x % 10;
     x -= x % 10;
@@ -151,7 +229,53 @@ int setInt(struct NUMBER *a, int x)
     return -1;
   }
 }
+// TODO: intからstringに変えたい
+int setIntFromString(struct NUMBER *a, char *x)
+{
+  int i;
+  for (i = 0; i < KETA; i++)
+  {
+    a->n[i] = atoi(x[i]);
+  }
+  return 0;
+}
 
+int getInt(struct NUMBER *a, int *x)
+{
+  int i, temp = 1;
+  for (i = 0; i < KETA; i++)
+  {
+    if (*x > INT32_MAX - (a->n[i] * temp))
+    {
+      return -1;
+    }
+    else
+    {
+      *x += a->n[i] * temp;
+      temp *= 10;
+    }
+  }
+  if (getSign(a) != 1)
+  {
+    *x -= *x * 2;
+  }
+  return 0;
+}
+// TODO: 難しいね
+int getIntAsString(struct NUMBER *a, char *x)
+{
+  int i, temp = 1;
+  if (getSign(a) != 1)
+  {
+    x[0] = "-";
+  }
+  for (i = 0; i < KETA; i++)
+  {
+    *(x + (KETA - i)) += a->n[i] * temp;
+    temp *= 10;
+  }
+  return 0;
+}
 /*xorshift_function*/
 void xorshiftInit(int seed)
 {
