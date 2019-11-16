@@ -22,16 +22,28 @@ uint64_t state;
 static uint64_t const multiplier = 6364136223846793005u;
 static uint64_t const increment = 1442695040888963407u; // 任意の奇数
 
-void clearByZero(struct NUMBER *);
+// 表示系
 void dispNumber(struct NUMBER *);
 void fdispNumber(struct NUMBER *, FILE *);
+int isZero(struct NUMBER *);
+// 設定系
+void clearByZero(struct NUMBER *);
 void setRnd(struct NUMBER *, int);
 void copyNumber(struct NUMBER *, struct NUMBER *);
 void getAbs(struct NUMBER *, struct NUMBER *);
-int isZero(struct NUMBER *);
+int setSign(struct NUMBER *, int);
+int getSign(struct NUMBER *);
+int numComp(struct NUMBER *, struct NUMBER *);
+void swap(struct NUMBER *, struct NUMBER *);
+// 計算系
 int mulBy10(struct NUMBER *, struct NUMBER *);
 int divBy10(struct NUMBER *, struct NUMBER *);
+int add(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+// 変換系
 int setInt(struct NUMBER *, int);
+int setIntFromString(struct NUMBER *, char *);
+int getInt(struct NUMBER *, int *);
+int getIntAsString(struct NUMBER *, char *);
 /*xorshift_function*/
 void xorshiftInit(int);
 uint32_t rol64(uint32_t, int);
