@@ -1,6 +1,8 @@
 #include "mulprec.h"
 
+// xorshiftが何故か死んでいる．何故 -> 関数の初期化をしていなかった
 
+// disp Multiple Number
 void dispNumber(struct NUMBER *a)
 {
   int i;
@@ -18,6 +20,7 @@ void dispNumber(struct NUMBER *a)
   }
 }
 
+// write Number to File
 void fdispNumber(struct NUMBER *a, FILE *FP)
 {
   int i;
@@ -35,6 +38,7 @@ void fdispNumber(struct NUMBER *a, FILE *FP)
   }
 }
 
+// check Number is ZERO
 int isZero(struct NUMBER *a)
 {
   int i;
@@ -48,6 +52,7 @@ int isZero(struct NUMBER *a)
   return 0;
 }
 
+// clear Number by ZERO
 void clearByZero(struct NUMBER *a)
 {
   int i;
@@ -59,18 +64,20 @@ void clearByZero(struct NUMBER *a)
   setSign(a, +1);
 }
 
+// set NUMBER by randomNUMBER
 void setRnd(struct NUMBER *a, int k)
 {
   int i = 0;
-  for (i = 0; i < KETA; i++)
+  for (i = 0; i < k; i++)
   {
-    a->n[i] = xorshift() % 10;
+    a->n[i] = pcg32() % 10;
     //a->n[i] = pcg32() % 10;
   }
-  setSign(a, (xorshift() % 2 == 0) ? -1 : +1);
+  setSign(a, (pcg32() % 2 == 0) ? -1 : +1);
   //a->sign = pcg32() % 2;
 }
 
+// copy NUMBER a to b
 void copyNumber(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
@@ -81,12 +88,14 @@ void copyNumber(struct NUMBER *a, struct NUMBER *b)
   setSign(b, getSign(a));
 }
 
+// copy Number a to b and a become +
 void getAbs(struct NUMBER *a, struct NUMBER *b)
 {
   copyNumber(a, b);
   setSign(a, +1);
 }
 
+// set a's Signature from s
 int setSign(struct NUMBER *a, int s)
 {
   if (s == +1)
@@ -98,11 +107,13 @@ int setSign(struct NUMBER *a, int s)
   return 0;
 }
 
+// return a's Signature
 int getSign(struct NUMBER *a)
 {
   return a->sign == +1 ? +1 : -1;
 }
 
+// compare a and b
 int numComp(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
@@ -143,6 +154,7 @@ int numComp(struct NUMBER *a, struct NUMBER *b)
   return -10000;
 }
 
+// swap a and b
 void swap(struct NUMBER *a, struct NUMBER *b)
 {
   struct NUMBER c;
@@ -164,6 +176,7 @@ void swap(struct NUMBER *a, struct NUMBER *b)
   setSign(b, c.sign);
 }
 
+// left shift
 int mulBy10(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
@@ -183,6 +196,7 @@ int mulBy10(struct NUMBER *a, struct NUMBER *b)
   }
 }
 
+// right shift
 int divBy10(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
@@ -202,6 +216,24 @@ int divBy10(struct NUMBER *a, struct NUMBER *b)
   }
 }
 
+// c = a + b
+int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
+{
+  int i, e = 0, d;
+  for (i = 0; i < KETA; i++)
+  {
+    d = a->n[i] + b->n[i] + e;
+    c->n[i] = d % 10;
+    e = d / 10;
+  }
+  return e != 0 ? -1 : 0;
+}
+
+int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c) {
+  
+}
+
+// set integer to NUMBER
 int setInt(struct NUMBER *a, int x)
 {
   int i = 0;
@@ -229,15 +261,34 @@ int setInt(struct NUMBER *a, int x)
     return -1;
   }
 }
-// TODO: intからstringに変えたい
+
+// stringからi文字ずつint型の配列に入れる
 int setIntFromString(struct NUMBER *a, char *x)
 {
   int i;
-  for (i = 0; i < KETA; i++)
+  for (i = 0; i < strlen(x); i++)
   {
-    a->n[i] = atoi(x[i]);
+    if (i >= KETA && x[strlen(x) - i - 1] != '-')
+    {
+      printf("over flow\n");
+      return -1;
+    }
+    if (x[strlen(x) - i - 1] == '-')
+    {
+      setSign(a, -1);
+      return 0;
+    }
+    a->n[i] = ctoi(x[strlen(x) - i - 1]);
+    if (a->n[i] < 0 && a->n[i] > 9)
+      return -1;
   }
+  setSign(a, +1);
   return 0;
+}
+
+int ctoi(char x)
+{
+  return x - '0';
 }
 
 int getInt(struct NUMBER *a, int *x)
@@ -261,21 +312,21 @@ int getInt(struct NUMBER *a, int *x)
   }
   return 0;
 }
-// TODO: 難しいね
-int getIntAsString(struct NUMBER *a, char *x)
+// TODO: Int型をChar型にして配列に入れるだけ
+int getIntAsString(struct NUMBER *a, char *x) /* *xはx[KETA + 1]と扱う(しかない) */
 {
-  int i, temp = 1;
-  if (getSign(a) != 1)
-  {
-    x[0] = "-";
-  }
+  int i;
   for (i = 0; i < KETA; i++)
   {
-    *(x + (KETA - i)) += a->n[i] * temp;
-    temp *= 10;
+    x[KETA - i] = a->n[i] + '0';
+  }
+  if (getSign(a) != 1)
+  {
+    x[0] = *("-");
   }
   return 0;
 }
+
 /*xorshift_function*/
 void xorshiftInit(int seed)
 {
