@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
+#include <string.h>
 //#include "CppUTest/CommandLineTestRunner.h"
 //#include "CppUTest/TestHarness.h"
 #define KETA 30
@@ -39,11 +40,13 @@ void swap(struct NUMBER *, struct NUMBER *);
 int mulBy10(struct NUMBER *, struct NUMBER *);
 int divBy10(struct NUMBER *, struct NUMBER *);
 int add(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int sub(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);
 int getInt(struct NUMBER *, int *);
 int getIntAsString(struct NUMBER *, char *);
+int ctoi(char);
 /*xorshift_function*/
 void xorshiftInit(int);
 uint32_t rol64(uint32_t, int);
