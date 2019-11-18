@@ -14,6 +14,23 @@ int main(int argc, char *argv[])
   FILE *FP;
 
   /*init random function*/ // 絶対にいる
+
+  /*if ((FP = fopen("/dev/random", O_RDONLY)) == NULL)
+  {
+    printf("can't open");
+    exit(-500);
+  }
+  unsigned int o[100];
+  for (i = 0; i < 100; i++)
+  {
+    o[i] = 0;
+  }
+  //int ret;
+  for (i = 0; i < 100; i++)
+  {
+    fread(o[i], sizeof(o), sizeof(o), FP);
+  }*/
+
   srandom(time(NULL));
   xorshiftInit(random() % 10000000000);
   pcg32_init(random());
@@ -92,14 +109,16 @@ int main(int argc, char *argv[])
     setInt(&h, data2);
     //printf("data1 = %d data2 = %d\n", data1, data2);
     add(&g, &h, &l);
-    fdispNumber(&l,FP);
-    fprintf(FP,"\n");
+    fdispNumber(&l, FP);
+    fprintf(FP, "\n");
     fprintf(FP, (data1 + data2) >= 0 ? "+" : "-");
     fprintf(FP, "%030d\n", data1 + data2);
     count++;
   }
   count = 0;
   fclose(FP);
+  char *command = "python checkint.py";
+  (void)system(command);
 
   return 0;
 }
