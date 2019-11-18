@@ -230,7 +230,6 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 }
 
 int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c) {
-  
 }
 
 // set integer to NUMBER

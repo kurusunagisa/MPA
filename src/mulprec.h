@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include <string.h>
+
+#include <fcntl.h>
 //#include "CppUTest/CommandLineTestRunner.h"
 //#include "CppUTest/TestHarness.h"
 #define KETA 30
