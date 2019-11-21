@@ -230,8 +230,21 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 }
 
 int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c) {
+  int i, h = 0,d;
+  if (numComp(a,b) < 0)
+    swap(a, b);
+  for (i = 0; i < KETA;i++) {
+    a->n[i] -= h;
+    if(a->n[i] >= b->n[i]) {
+      c->n[i] = a->n[i] - b->n[i];
+      h = 0;
+    } else {
+      c->n[i] = 10 + a->n[i] - b->n[i];
+      h = 1;
+    }
+  }
+  return h != 0 ? -1 : 0;
 }
-
 // set integer to NUMBER
 int setInt(struct NUMBER *a, int x)
 {
