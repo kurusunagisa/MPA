@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   int data2;
   char x[] = "500000000000000000000000000002";
   char z[] = "499999999999999999999999999999";
-  FILE *FP;
+  FILE *FP,*FP1,*FP2;
 
   /*init random function*/ // 絶対にいる
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   printf("\n");
 
   // check add
-  if ((FP = fopen("check.txt", "w")) == NULL)
+  /*if ((FP = fopen("check.txt", "w")) == NULL)
   {
     fprintf(stderr, "cannot open the file.");
     exit(-500);
@@ -118,7 +118,43 @@ int main(int argc, char *argv[])
   count = 0;
   fclose(FP);
   char *command = "python checkint.py";
-  (void)system(command);
+  (void)system(command);*/
+
+  if ((FP1 = fopen("check1.txt", "w")) == NULL)
+  {
+    fprintf(stderr, "cannot open the file.");
+    exit(-500);
+  }
+  if ((FP2 = fopen("check2.txt", "w")) == NULL)
+  {
+    fprintf(stderr, "cannot open the file.");
+    exit(-500);
+  }
+  while (count < 1000000)
+  {
+    clearByZero(&g);
+    clearByZero(&h);
+    clearByZero(&l);
+    data1 = random() % 1000000000;
+    data2 = random() % 1000000000;
+    setInt(&g, data1);
+    setInt(&h, data2);
+    //printf("data1 = %d data2 = %d\n", data1, data2);
+    add(&g, &h, &l);
+    fdispNumber(&l, FP1);
+    fprintf(FP1, "\n");
+    fprintf(FP2, (data1 + data2) >= 0 ? "+" : "-");
+    fprintf(FP2, "%030d\n", data1 + data2);
+    count++;
+  }
+  count = 0;
+  fclose(FP1);
+  fclose(FP2);
+
+  char *command = "diff check1.txt check2.txt";
+  printf("command = %d\n",system(command));
+
+  
 
   return 0;
 }
