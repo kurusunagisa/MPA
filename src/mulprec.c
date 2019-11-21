@@ -88,11 +88,11 @@ void copyNumber(struct NUMBER *a, struct NUMBER *b)
   setSign(b, getSign(a));
 }
 
-// copy Number a to b and a become +
+// copy Number a to b and b become +
 void getAbs(struct NUMBER *a, struct NUMBER *b)
 {
   copyNumber(a, b);
-  setSign(a, +1);
+  setSign(b, +1);
 }
 
 // set a's Signature from s
@@ -123,7 +123,7 @@ int numComp(struct NUMBER *a, struct NUMBER *b)
   }
   if (getSign(a) == +1)
   {
-    for (i = 0; i < KETA; i++)
+    for (i = KETA - 1; i >= 0; i--)
     {
       if (a->n[i] > b->n[i])
       {
@@ -138,7 +138,7 @@ int numComp(struct NUMBER *a, struct NUMBER *b)
   }
   if (getSign(a) == -1)
   {
-    for (i = 0; i < KETA; i++)
+    for (i = KETA - 1; i >= 0; i--)
     {
       if (a->n[i] < b->n[i])
       {
@@ -220,6 +220,25 @@ int divBy10(struct NUMBER *a, struct NUMBER *b)
 int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 {
   int i, e = 0, d;
+  struct NUMBER x, y;
+  clearByZero(&x);
+  clearByZero(&y);
+  if (getSign(a) == -1 && getSign(b) == -1)
+  {
+    getAbs(a, &x);
+    getAbs(b, &y);
+    setSign(c, -1);
+  }
+  if (getSign(a) == -1 && getSign(b) == +1)
+  {
+    getAbs(a, &x);
+    return sub(b, &x, c);
+  }
+  if (getSign(a) == +1 && getSign(b) == -1)
+  {
+    getAbs(b, &y);
+    return sub(a, &y, c);
+  }
   for (i = 0; i < KETA; i++)
   {
     d = a->n[i] + b->n[i] + e;
@@ -229,16 +248,39 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   return e != 0 ? -1 : 0;
 }
 
-int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c) {
-  int i, h = 0,d;
-  if (numComp(a,b) < 0)
+int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
+{
+  int i, h = 0, d;
+  struct NUMBER x, y;
+  clearByZero(&x);
+  clearByZero(&y);
+  // (getSign(a) == +1 || getSign(a) == -1) && getSign(b) == -1
+  if(getSign(b) == -1)
+  {
+    getAbs(b, &y);
+    return add(a, &y, c);
+  }
+  if (getSign(a) == -1 && getSign(b) == +1)
+  {
+    getAbs(a, &x);
+    setSign(c, -1);
+    return add(&x, b, c);
+  }
+  if (numComp(a, b) < 0)
+  {
     swap(a, b);
-  for (i = 0; i < KETA;i++) {
+    setSign(c, -1);
+  }
+  for (i = 0; i < KETA; i++)
+  {
     a->n[i] -= h;
-    if(a->n[i] >= b->n[i]) {
+    if (a->n[i] >= b->n[i])
+    {
       c->n[i] = a->n[i] - b->n[i];
       h = 0;
-    } else {
+    }
+    else
+    {
       c->n[i] = 10 + a->n[i] - b->n[i];
       h = 1;
     }
