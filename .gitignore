@@ -52,4 +52,4 @@ Mkfile.old
 dkms.conf
 
 *.exe.stackdump
-check.txt
+*.txt
