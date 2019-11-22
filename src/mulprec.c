@@ -248,14 +248,15 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   return e != 0 ? -1 : 0;
 }
 
+// c = a - b
 int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 {
-  int i, h = 0, d;
+  int i, h = 0, d, flag = 0;
   struct NUMBER x, y;
   clearByZero(&x);
   clearByZero(&y);
   // (getSign(a) == +1 || getSign(a) == -1) && getSign(b) == -1
-  if(getSign(b) == -1)
+  if (getSign(b) == -1)
   {
     getAbs(b, &y);
     return add(a, &y, c);
@@ -270,6 +271,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   {
     swap(a, b);
     setSign(c, -1);
+    flag = 1;
   }
   for (i = 0; i < KETA; i++)
   {
@@ -285,8 +287,116 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
       h = 1;
     }
   }
+  if (flag == 1)
+  {
+    swap(a, b);
+  }
   return h != 0 ? -1 : 0;
 }
+
+int increment(struct NUMBER *a, struct NUMBER *b)
+{
+  struct NUMBER one;
+  int r;
+
+  setInt(&one, +1);
+  r = add(a, &one, b);
+
+  return r;
+}
+
+int decrement(struct NUMBER *a, struct NUMBER *b)
+{
+  struct NUMBER one;
+  int r;
+  setInt(&one, 1);
+  r = sub(a, &one, b);
+  return r;
+}
+
+int simpleMultiple(int a, int b, int *c)
+{
+  int i = 0, j;
+  /*for (i = 0; i < b; i++)
+  {
+    *c += a;
+    if (a > INT32_MAX - *c)
+    {
+      return -500;
+    }
+  }*/
+  if (b < 0)
+    j = abs(b);
+  else
+    j = b;
+  while (1)
+  {
+    if (i >= j)
+    {
+      break;
+    }
+    if (a >= 0)
+    {
+      if (a > INT32_MAX - *c)
+      {
+        return -400;
+      }
+    }
+    else
+    {
+      if (a < INT32_MIN - *c)
+      {
+        return -500;
+      }
+    }
+    *c += a;
+    //printf("i = %d j = %d", i, j);
+    //printf("test3 = %d\n", *c);
+    i++;
+  }
+  if (b < 0)
+    *c -= *c * 2;
+  return 0;
+}
+
+// TODO:自信ない
+int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
+{
+  int i = 0, j = 0, aj, bi, h, e,k;
+  struct NUMBER d, f,g;
+  for (i = 0; i < KETA; i++)
+  {
+    bi = b->n[i];
+    h = 0;
+    clearByZero(&d);
+    for (j = 0; i < KETA; j++)
+    {
+      aj = a->n[j];
+      e = aj * bi + h;
+      if(j + i >= KETA) {
+        if(1 == 1)
+          ;
+        break;
+      }
+      d.n[j + i] = e % 10;
+      h = e / 10;
+    }
+    /*for (k = 0; k < i;k++) {
+      clearByZero(&g);
+      if(mulBy10(&d, &g) == -1)
+        return -1;
+      copyNumber(&g, &d);
+    }*/
+    if (h != 0)
+      return -1;
+    clearByZero(&f);
+    if (add(c, &d, &f) == -1)
+      return -1;
+    copyNumber(&f, c);
+  }
+  return 0;
+}
+
 // set integer to NUMBER
 int setInt(struct NUMBER *a, int x)
 {
@@ -433,16 +543,16 @@ uint32_t rotr32(uint32_t x, unsigned r)
 
 uint32_t pcg32(void)
 {
-  uint64_t x = state;
+  uint64_t x = pcg_state;
   unsigned count = (unsigned)(x >> 59); // 59 = 64 - 5
 
-  state = x * multiplier + increment;
+  pcg_state = x * pcg_multiplier + pcg_increment;
   x ^= x >> 18;                              // 18 = (64 - 27)/2
   return rotr32((uint32_t)(x >> 27), count); // 27 = 32 - 5
 }
 
 void pcg32_init(uint64_t seed)
 {
-  state = seed + increment;
+  pcg_state = seed + pcg_increment;
   (void)pcg32();
 }
