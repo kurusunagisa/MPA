@@ -22,9 +22,9 @@ uint64_t xorshift_y;
 uint64_t xorshift_z;
 uint64_t xorshift_w;
 /*Permuted congruential generator-field*/
-uint64_t state;
-static uint64_t const multiplier = 6364136223846793005u;
-static uint64_t const increment = 1442695040888963407u; // 任意の奇数
+uint64_t pcg_state;
+static uint64_t const pcg_multiplier = 6364136223846793005u;
+static uint64_t const pcg_increment = 1442695040888963407u; // 任意の奇数
 
 // 表示系
 void dispNumber(struct NUMBER *);
@@ -44,6 +44,10 @@ int mulBy10(struct NUMBER *, struct NUMBER *);
 int divBy10(struct NUMBER *, struct NUMBER *);
 int add(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int sub(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int increment(struct NUMBER *, struct NUMBER *);
+int decrement(struct NUMBER *, struct NUMBER *);
+int simpleMultiple(int, int, int *);
+int multiple(struct NUMBER*, struct NUMBER*, struct NUMBER*);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);

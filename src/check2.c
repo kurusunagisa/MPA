@@ -10,10 +10,12 @@ int main(int argc, char *argv[])
   int data1;
   int data2;
   int sign1, sign2;
-  char x[] = "500000000000000000000000000002";
-  char z[] = "499999999999999999999999999999";
+  char x[] = "500000000000000000000000000000";
+  char z[] = "999999999999999999999999999999";
   char *command = "diff check1.txt check2.txt";
   FILE *FP, *FP1, *FP2;
+  int dada = 2;
+  printf("%f\n", pow(5,dada));
 
   /*init random function*/ // 絶対にいる
 
@@ -155,6 +157,35 @@ int main(int argc, char *argv[])
 
   //printf("command = %d\n",system(command));
 
+  /*clearByZero(&a);
+  clearByZero(&b);
+  clearByZero(&c);
+  clearByZero(&d);
+  //setInt(&a,2);
+  setIntFromString(&a, z);
+  dispNumber(&a);
+  printf("\n");
+  printf("decrement = %d\n",decrement(&a, &b));
+  dispNumber(&a);
+  printf("\n");
+  dispNumber(&b);
+  printf("\n");
+  printf("decrement = %d\n", decrement(&b, &c));
+  dispNumber(&b);
+  printf("\n");
+  dispNumber(&c);
+  printf("\n");
+  printf("decrement = %d\n",decrement(&c, &d));
+  printf("c = ");dispNumber(&c);
+  printf("\n");
+  dispNumber(&d);
+  printf("\n");
+  printf("decrement = %d\n", decrement(&d, &a));
+  dispNumber(&d);
+  printf("\n");
+  dispNumber(&a);
+  printf("\n");*/
+
   clearByZero(&a);
   clearByZero(&b);
   clearByZero(&c);
@@ -168,6 +199,42 @@ int main(int argc, char *argv[])
   sub(&a, &b, &c);
   dispNumber(&c);
   printf("\n");
+
+  int test1 = 12;
+  int test2 = -3;
+  int test3 = 0;
+
+  printf("multi = %d\n",simpleMultiple(test1,test2,&test3));
+  printf("test3 = %d\n", test3);
+
+  clearByZero(&a);
+  clearByZero(&b);
+  clearByZero(&c);
+
+  setInt(&a, 8489);
+  setInt(&b, 1232);
+  dispNumber(&a);
+  printf("\n");
+  dispNumber(&b);
+  printf("\n");
+  printf("multiple = %d\n",multiple(&a, &b, &c));
+  dispNumber(&c);
+
+  /*for (i = 0; i < 1000000;i++){
+    test1 = xorshift() % 46000;
+    test2 = xorshift() % 46000;
+    test3 = 0;
+    if(xorshift() % 2 == 1)
+      test1 -= test1 * 2;
+    if (xorshift() % 2 == 1)
+      test2 -= test2 * 2;
+    simpleMultiple(test1, test2, &test3);
+    if(test3 != test1 * test2) {
+      printf("test1 * test2 = %d test3 = %d\n", test1 * test2, test3);
+      break;
+    }
+  }
+  printf("end\n");*/
 
   /*if ((FP1 = fopen("check1.txt", "w")) == NULL)
   {
@@ -212,7 +279,7 @@ int main(int argc, char *argv[])
 
   printf("command = %d\n", system(command));*/
 
-  if ((FP1 = fopen("check1.txt", "w")) == NULL)
+  /*if ((FP1 = fopen("check1.txt", "w")) == NULL)
   {
     fprintf(stderr, "cannot open the file1.");
     exit(-500);
@@ -253,7 +320,7 @@ int main(int argc, char *argv[])
   fclose(FP1);
   fclose(FP2);
 
-  printf("command = %d\n", system(command));
+  printf("command = %d\n", system(command)); */
 
   /*if ((FP1 = fopen("check1.txt", "w")) == NULL)
   {
