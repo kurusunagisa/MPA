@@ -6,10 +6,8 @@
 #include <string.h>
 #include <math.h>
 
-#include <fcntl.h>
-//#include "CppUTest/CommandLineTestRunner.h"
-//#include "CppUTest/TestHarness.h"
 #define KETA 30
+#define TEST_MAX 3000000
 
 struct NUMBER
 {
@@ -47,7 +45,9 @@ int sub(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int increment(struct NUMBER *, struct NUMBER *);
 int decrement(struct NUMBER *, struct NUMBER *);
 int simpleMultiple(int, int, int *);
-int multiple(struct NUMBER*, struct NUMBER*, struct NUMBER*);
+int multiple(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int simpleDivide(int, int, int *, int *);
+int divide(struct NUMBER *, struct NUMBER *, struct NUMBER *, struct NUMBER *);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);
@@ -55,10 +55,11 @@ int getInt(struct NUMBER *, int *);
 int getIntAsString(struct NUMBER *, char *);
 int ctoi(char);
 /*xorshift_function*/
-void xorshiftInit(int);
+void xorshiftInit(uint64_t);
 uint32_t rol64(uint32_t, int);
-uint32_t xorshift();
+uint32_t xorshift(void);
 /*Permuted congruential generator_function*/
 uint32_t rotr32(uint32_t, unsigned);
-uint32_t pcg32();
+uint32_t pcg32(void);
 void pcg32_init(uint64_t);
+//#pragma GCC diagnostic ignored ""

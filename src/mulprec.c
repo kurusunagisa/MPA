@@ -1,5 +1,4 @@
 #include "mulprec.h"
-
 // xorshiftが何故か死んでいる．何故 -> 関数の初期化をしていなかった
 
 // disp Multiple Number
@@ -70,11 +69,9 @@ void setRnd(struct NUMBER *a, int k)
   int i = 0;
   for (i = 0; i < k; i++)
   {
-    a->n[i] = pcg32() % 10;
-    //a->n[i] = pcg32() % 10;
+    a->n[i] = abs((int)pcg32()) % 10;
   }
   setSign(a, (pcg32() % 2 == 0) ? -1 : +1);
-  //a->sign = pcg32() % 2;
 }
 
 // copy NUMBER a to b
@@ -154,10 +151,11 @@ int numComp(struct NUMBER *a, struct NUMBER *b)
   return -10000;
 }
 
-// swap a and b
+// swap a with b
 void swap(struct NUMBER *a, struct NUMBER *b)
 {
   struct NUMBER c;
+  clearByZero(&c);
   int i;
   for (i = 0; i < KETA; i++)
   {
@@ -180,7 +178,7 @@ void swap(struct NUMBER *a, struct NUMBER *b)
 int mulBy10(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
-  for (i = 0; i < KETA; i++)
+  for (i = 0; i < KETA - 1; i++)
   {
     b->n[i + 1] = a->n[i];
   }
@@ -200,7 +198,7 @@ int mulBy10(struct NUMBER *a, struct NUMBER *b)
 int divBy10(struct NUMBER *a, struct NUMBER *b)
 {
   int i;
-  for (i = 0; i < KETA; i++)
+  for (i = 0; i < KETA - 1; i++)
   {
     b->n[i] = a->n[i + 1];
   }
@@ -223,6 +221,7 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   struct NUMBER x, y;
   clearByZero(&x);
   clearByZero(&y);
+  setSign(c, +1);
   if (getSign(a) == -1 && getSign(b) == -1)
   {
     getAbs(a, &x);
@@ -251,7 +250,7 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 // c = a - b
 int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 {
-  int i, h = 0, d, flag = 0;
+  int i, h = 0, flag = 0;
   struct NUMBER x, y;
   clearByZero(&x);
   clearByZero(&y);
@@ -272,6 +271,10 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
     swap(a, b);
     setSign(c, -1);
     flag = 1;
+  }
+  else
+  {
+    setSign(c, +1);
   }
   for (i = 0; i < KETA; i++)
   {
@@ -300,6 +303,7 @@ int increment(struct NUMBER *a, struct NUMBER *b)
   int r;
 
   setInt(&one, +1);
+
   r = add(a, &one, b);
 
   return r;
@@ -362,37 +366,161 @@ int simpleMultiple(int a, int b, int *c)
 // TODO:自信ない
 int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 {
-  int i = 0, j = 0, aj, bi, h, e,k;
-  struct NUMBER d, f,g;
+  int i = 0, j = 0, aj, bi, h, e,r;
+  struct NUMBER d, f, x, y;
+  if(getSign(a) == -1 && getSign(b) == +1){
+    getAbs(a, &x);
+    r = multiple(&x, b, c);
+    setSign(c, -1);
+    return r;
+  }
+  if (getSign(a) == +1 && getSign(b) == -1)
+  {
+    getAbs(b, &y);
+    r = multiple(a, &y, c);
+    setSign(c, -1);
+    return r;
+  }
+  if (getSign(a) == -1 && getSign(b) == -1)
+  {
+    getAbs(a, &x);
+    getAbs(b, &y);
+    r = multiple(&x, &y, c);
+    return r;
+  }
   for (i = 0; i < KETA; i++)
   {
     bi = b->n[i];
     h = 0;
     clearByZero(&d);
-    for (j = 0; i < KETA; j++)
+    for (j = 0; j < KETA; j++)
     {
       aj = a->n[j];
       e = aj * bi + h;
-      if(j + i >= KETA) {
-        if(1 == 1)
-          ;
+      if (j + i >= KETA)
+      {
+        printf("j = %d i = %d aj = %d bi = %d e = %d\n", j, i, aj, bi, e);
+        if (e != 0)
+        {
+          return -1;
+        }
         break;
       }
       d.n[j + i] = e % 10;
       h = e / 10;
     }
-    /*for (k = 0; k < i;k++) {
-      clearByZero(&g);
-      if(mulBy10(&d, &g) == -1)
-        return -1;
-      copyNumber(&g, &d);
-    }*/
     if (h != 0)
       return -1;
     clearByZero(&f);
     if (add(c, &d, &f) == -1)
       return -1;
     copyNumber(&f, c);
+  }
+  return 0;
+}
+
+int simpleDivide(int x, int y, int *z, int *w)
+{
+  int k;
+  int flag = 0;
+
+  if (y == 0)
+    return -1;
+  if (y < 0)
+  {
+    flag = 1;
+    y = abs(y);
+  }
+  if (x < 0)
+  {
+    if (!flag)
+      flag = 2;
+    else
+      flag = 3;
+    x = abs(x);
+  }
+  k = 0;
+  while (1)
+  {
+    if (x < y)
+      break;
+    x -= y;
+    k++;
+  }
+  switch (flag)
+  {
+  case 0:
+    *z = k;
+    *w = x;
+    break;
+  case 1:
+    *z = -k;
+    *w = x;
+    break;
+  case 2:
+    *z = -k;
+    *w = -x;
+    break;
+  case 3:
+    *z = k;
+    *w = -x;
+    break;
+  default:
+    break;
+  }
+  return 0;
+}
+
+int divide(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c, struct NUMBER *d)
+{
+  struct NUMBER m, n, p, q;
+  int r;
+  if (getSign(a) == +1 && getSign(b) == -1)
+  {
+    getAbs(b, &p);
+    r = divide(a, &p, c, d);
+    setSign(c, -1);
+    return r;
+  }
+  if (getSign(a) == -1 && getSign(b) == +1)
+  {
+    getAbs(a, &p);
+    r = divide(&p, b, c, d);
+    setSign(c, -1);
+    setSign(d, -1);
+    return r;
+  }
+  if (getSign(a) == -1 && getSign(b) == -1)
+  {
+    getAbs(a, &p);
+    getAbs(b, &q);
+    r = divide(&p, &q, c, d);
+    setSign(d, -1);
+    return r;
+  }
+  clearByZero(c);
+  clearByZero(d);
+
+  if (!isZero(b))
+  {
+    return -1;
+  }
+
+  copyNumber(a, &n);
+  while (1)
+  {
+    //printf("numcomp = %d\n", numComp(&n, b));
+    if (numComp(&n, b) < 0)
+    {
+      copyNumber(&n, d);
+      break;
+    }
+    increment(c, &m);
+    copyNumber(&m, c);
+    clearByZero(&m);
+    sub(&n, b, &m);
+    copyNumber(&m, &n);
+    clearByZero(&m);
   }
   return 0;
 }
@@ -429,7 +557,7 @@ int setInt(struct NUMBER *a, int x)
 // stringからi文字ずつint型の配列に入れる
 int setIntFromString(struct NUMBER *a, char *x)
 {
-  int i;
+  unsigned int i;
   for (i = 0; i < strlen(x); i++)
   {
     if (i >= KETA && x[strlen(x) - i - 1] != '-')
@@ -457,8 +585,10 @@ int ctoi(char x)
 
 int getInt(struct NUMBER *a, int *x)
 {
-  int i, temp = 1;
-  for (i = 0; i < KETA; i++)
+  int i;
+  long temp = 1;
+  *x = 0;
+  for (i = 0; i < 9; i++)
   {
     if (*x > INT32_MAX - (a->n[i] * temp))
     {
@@ -467,7 +597,9 @@ int getInt(struct NUMBER *a, int *x)
     else
     {
       *x += a->n[i] * temp;
+      //printf("a->n[%d] = %d\n", i, a->n[i]);
       temp *= 10;
+      //printf("*x = %d\n", *x);
     }
   }
   if (getSign(a) != 1)
@@ -482,7 +614,7 @@ int getIntAsString(struct NUMBER *a, char *x) /* *xはx[KETA + 1]と扱う(し�
   int i;
   for (i = 0; i < KETA; i++)
   {
-    x[KETA - i] = a->n[i] + '0';
+    x[KETA - i] = (char)(a->n[i] + '0');
   }
   if (getSign(a) != 1)
   {
@@ -492,7 +624,7 @@ int getIntAsString(struct NUMBER *a, char *x) /* *xはx[KETA + 1]と扱う(し�
 }
 
 /*xorshift_function*/
-void xorshiftInit(int seed)
+void xorshiftInit(uint64_t seed)
 {
   seed = seed + 0x9E3779B97f4A7C15;
   seed = (seed ^ (seed) >> 30) * 0xBF58476D1CE4E5B9;
@@ -506,7 +638,7 @@ void xorshiftInit(int seed)
   seed = seed ^ (seed >> 31);
   xorshift_z = seed;
   xorshift_w = seed >> 6;
-  printf("x y z w : %lld %lld %lld %lld\n", xorshift_x, xorshift_y, xorshift_z, xorshift_w);
+  //printf("x y z w : %lld %lld %lld %lld\n", xorshift_x, xorshift_y, xorshift_z, xorshift_w);
   xorshift();
   xorshift();
   xorshift();
@@ -520,7 +652,7 @@ uint32_t rol64(uint32_t x, int k)
 
 uint32_t xorshift()
 {
-  uint32_t result = rol64(xorshift_y * 5, 7) * 9;
+  uint32_t result = rol64((uint32_t)xorshift_y * 5, 7) * 9;
   uint64_t t;
   t = xorshift_x ^ (xorshift_x << 17);
   xorshift_z ^= xorshift_x;
@@ -529,7 +661,7 @@ uint32_t xorshift()
   xorshift_x ^= xorshift_w;
   xorshift_z ^= t;
   //w ^= t ^ (t >> 8) ^ (w >> 19);
-  xorshift_w = rol64(xorshift_w, 45);
+  xorshift_w = rol64((uint32_t)xorshift_w, 45);
   //printf("result = %lld\n", result);
   return result;
 }
