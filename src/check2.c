@@ -1,6 +1,18 @@
 #include "mulprec.h"
-
+#pragma GCC diagnostic ignored "-Wunused-variable"  //使用されていない変数の警告を無効化
+#pragma GCC diagnostic ignored "-Wunused-parameter" //使用されていないパラメータの警告を無効化
 // TODO:フィボナッチ数列あとでやる
+
+/*for (;;){
+  if(TEST_MAX / % (TEST_MAX / 100000) == 0){
+    printf("\n-------------------\n")
+    printf("progress : ");
+    for (n = 0; n < max;n++){
+      printf("-");
+    }
+    printf("\n-------------------\n")
+  }
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -10,34 +22,19 @@ int main(int argc, char *argv[])
   int data1;
   int data2;
   int sign1, sign2;
-  char x[] = "500000000000000000000000000000";
+  int data3;
+  const char x[] = "500000000000000000000000000000";
   char z[] = "999999999999999999999999999999";
-  char *command = "diff check1.txt check2.txt";
+  const char *command = "diff check1.txt check2.txt";
   FILE *FP, *FP1, *FP2;
   int dada = 2;
-  printf("%f\n", pow(5,dada));
+  printf("%f\n", pow(5, dada));
 
   /*init random function*/ // 絶対にいる
 
-  /*if ((FP = fopen("/dev/random", O_RDONLY)) == NULL)
-  {
-    printf("can't open");
-    exit(-500);
-  }
-  unsigned int o[100];
-  for (i = 0; i < 100; i++)
-  {
-    o[i] = 0;
-  }
-  //int ret;
-  for (i = 0; i < 100; i++)
-  {
-    fread(o[i], sizeof(o), sizeof(o), FP);
-  }*/
-
-  srandom(time(NULL));
-  xorshiftInit(random() % 10000000000);
-  pcg32_init(random());
+  srandom((unsigned int)time(NULL));
+  xorshiftInit((uint64_t)random());
+  pcg32_init((uint64_t)random());
 
   /*setInt(&a, -12345);
   printf("a = ");
@@ -200,25 +197,31 @@ int main(int argc, char *argv[])
   dispNumber(&c);
   printf("\n");
 
-  int test1 = 12;
-  int test2 = -3;
-  int test3 = 0;
+  int test1, test2, test3;
+  test1 = 12;
+  test2 = -3;
+  test3 = 0;
 
-  printf("multi = %d\n",simpleMultiple(test1,test2,&test3));
+  printf("multi = %d\n", simpleMultiple(test1, test2, &test3));
   printf("test3 = %d\n", test3);
 
   clearByZero(&a);
   clearByZero(&b);
   clearByZero(&c);
 
-  setInt(&a, 8489);
-  setInt(&b, 1232);
+  char string1[] = "999999999999999";
+  char string2[] = "987654321098765";
+  setIntFromString(&a, string1);
+  setIntFromString(&b, string2);
+  //setInt(&a, 2098989898);
+  //setInt(&b, 2098989898);
   dispNumber(&a);
   printf("\n");
   dispNumber(&b);
   printf("\n");
-  printf("multiple = %d\n",multiple(&a, &b, &c));
+  printf("multiple = %d\n", multiple(&a, &b, &c));
   dispNumber(&c);
+  printf("\n");
 
   /*for (i = 0; i < 1000000;i++){
     test1 = xorshift() % 46000;
@@ -353,6 +356,58 @@ int main(int argc, char *argv[])
   fclose(FP1);
   fclose(FP2);
   printf("command = %d\n", system(command));*/
+  clearByZero(&e);
+  clearByZero(&f);
+  clearByZero(&a);
+  clearByZero(&b);
+  clearByZero(&c);
+  clearByZero(&d);
+  setInt(&e, -5);
+  setInt(&f, -3);
+  printf("e = ");
+  dispNumber(&e);
+  printf("\n");
+  printf("f = ");
+  dispNumber(&f);
+  printf("\n");
+  divide(&e, &f, &c, &d);
+  printf("e = ");
+  dispNumber(&e);
+  printf("\n");
+  printf("f = ");
+  dispNumber(&f);
+  printf("\n");
+  printf("c = ");
+  dispNumber(&c);
+  printf("\n");
+  printf("d = ");
+  dispNumber(&d);
+  printf("\n");
 
+  /*for (i = 0; i < 10000; i++)
+  {
+    data1 = xorshift() % 100000;
+    data2 = xorshift() % 100 + 5;
+    setInt(&a, data1);
+    setInt(&b, data2);
+    divide(&a, &b, &c, &d);
+    //printf("c = ");
+    //dispNumber(&c);
+    //printf("\n");
+    getInt(&c, &data3);
+    if (data1 / data2 != data3)
+    {
+      printf("data1 / data2 = %d\n", data1 / data2);
+      printf("data3 = %d\n", data3);
+      break;
+    }
+    getInt(&d, &data3);
+    if (data1 % data2 != data3)
+    {
+      printf("data1 \% data2 = %d\n", data1 % data2);
+      printf("data3 = %d\n", data3);
+      break;
+    }
+  }*/
   return 0;
 }
