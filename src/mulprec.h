@@ -48,6 +48,7 @@ int simpleMultiple(int, int, int *);
 int multiple(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int simpleDivide(int, int, int *, int *);
 int divide(struct NUMBER *, struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int fastpower(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);

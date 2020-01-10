@@ -366,9 +366,10 @@ int simpleMultiple(int a, int b, int *c)
 // TODO:自信ない
 int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
 {
-  int i = 0, j = 0, aj, bi, h, e,r;
+  int i = 0, j = 0, aj, bi, h, e, r;
   struct NUMBER d, f, x, y;
-  if(getSign(a) == -1 && getSign(b) == +1){
+  if (getSign(a) == -1 && getSign(b) == +1)
+  {
     getAbs(a, &x);
     r = multiple(&x, b, c);
     setSign(c, -1);
@@ -399,7 +400,7 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
       e = aj * bi + h;
       if (j + i >= KETA)
       {
-        printf("j = %d i = %d aj = %d bi = %d e = %d\n", j, i, aj, bi, e);
+        //printf("j = %d i = %d aj = %d bi = %d e = %d\n", j, i, aj, bi, e);
         if (e != 0)
         {
           return -1;
@@ -523,6 +524,74 @@ int divide(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c, struct NUMBER *
     clearByZero(&m);
   }
   return 0;
+}
+
+// TODO:add辺りでセグフォ(もしくはStack OverFlow)ってる 範囲がおかしいかも 配列外を参照している説ある
+/*
+int divide(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c, struct NUMBER *d)
+{
+  int i = KETA - 1, k = 0;
+  struct NUMBER h, l, m, n, t, x, y, z, temp1, temp2;
+  clearByZero(&h);
+  clearByZero(&l);
+  clearByZero(&m);
+  clearByZero(&n);
+  clearByZero(&t);
+  clearByZero(&x);
+  clearByZero(&y);
+  clearByZero(&z);
+  clearByZero(&temp1);
+  clearByZero(&temp2);
+  setInt(&m, 10);
+  while (i >= KETA - 1)
+  {
+    //multiple(&m, &h, &l);  // 10h
+    mulBy10(&h, &l);
+    setInt(&n, a->n[i]);   // a[i]
+    add(&l, &n, &t);       // t = 10h + a[i]
+    divide(&t, b, &y, &h); // h = t mod b
+    clearByZero(&y);
+    sub(&t, &h, &y); // t - h
+    divide(&y, b, &temp1, &temp2);
+    getInt(&temp1, &k);
+    c->n[i] = k;
+    i--;
+  }
+  copyNumber(&h, d);
+  return 0;
+}
+*/
+
+// a^b
+int fastpower(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
+{
+  int x = 0;
+  struct NUMBER n;
+  struct NUMBER m;
+  struct NUMBER o;
+  struct NUMBER p;
+  getInt(b, &x);
+  if (x == 0)
+  {
+    setInt(c, +1);
+  }
+  if (x == 1)
+  {
+    copyNumber(a, c);
+    return x;
+  }
+  if (x % 2 == 0)
+  {
+    copyNumber(a, &n);
+    multiple(a, &n, &m);
+    setInt(&o, x / 2);
+    fastpower(&m, &o, &p);
+    copyNumber(&p, c);
+  }
+  decrement(b, &n);
+  fastpower(a, &n, &p);
+  multiple(a, &p, &o);
+  copyNumber(&o, c);
 }
 
 // set integer to NUMBER

@@ -209,8 +209,8 @@ int main(int argc, char *argv[])
   clearByZero(&b);
   clearByZero(&c);
 
-  char string1[] = "999999999999999";
-  char string2[] = "987654321098765";
+  char string1[] = "-0";
+  char string2[] = "3";
   setIntFromString(&a, string1);
   setIntFromString(&b, string2);
   //setInt(&a, 2098989898);
@@ -362,8 +362,8 @@ int main(int argc, char *argv[])
   clearByZero(&b);
   clearByZero(&c);
   clearByZero(&d);
-  setInt(&e, -5);
-  setInt(&f, -3);
+  setInt(&e, 5);
+  setInt(&f, 3);
   printf("e = ");
   dispNumber(&e);
   printf("\n");
@@ -383,13 +383,42 @@ int main(int argc, char *argv[])
   printf("d = ");
   dispNumber(&d);
   printf("\n");
-
-  /*for (i = 0; i < 10000; i++)
+  clearByZero(&e);
+  clearByZero(&f);
+  clearByZero(&a);
+  clearByZero(&b);
+  clearByZero(&c);
+  clearByZero(&d);
+  /*
+  for (i = 0; i < 10000; i++)
   {
     data1 = xorshift() % 100000;
     data2 = xorshift() % 100 + 5;
     setInt(&a, data1);
     setInt(&b, data2);
+    switch (xorshift() % 4)
+    {
+    case 0:
+      setSign(&a, -1);
+      setSign(&b, +1);
+      data1 -= data1 * 2;
+      break;
+    case 1:
+      setSign(&a, +1);
+      setSign(&b, -1);
+      data2 -= data2 * 2;
+      break;
+    case 2:
+      setSign(&a, -1);
+      setSign(&b, -1);
+      data1 -= data1 * 2;
+      data2 -= data2 * 2;
+      break;
+    case 3:
+      setSign(&a, +1);
+      setSign(&b, +1);
+      break;
+    }
     divide(&a, &b, &c, &d);
     //printf("c = ");
     //dispNumber(&c);
