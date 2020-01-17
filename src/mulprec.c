@@ -420,6 +420,37 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   return 0;
 }
 
+int factorial(struct NUMBER *a, struct NUMBER *b)
+{
+  struct NUMBER c, d, e, f;
+  clearByZero(&c);
+  clearByZero(&d);
+  clearByZero(&e);
+  clearByZero(&f);
+  if (numComp(b, &f) == 0)
+  {
+    copyNumber(a, b);
+  }
+  copyNumber(a, &c);
+  decrement(&c, &d);
+  if (numComp(&d, &f) == 0)
+  {
+    return 0;
+  }
+  printf("a = ");
+  dispNumber(a);
+  printf("\n");
+  printf("d = ");
+  dispNumber(&d);
+  printf("\n");
+  multiple(b, &d, &e);
+  copyNumber(&e, b);
+  printf("b = ");
+  dispNumber(b);
+  printf("\n");
+  factorial(&d, b);
+}
+
 int simpleDivide(int x, int y, int *z, int *w)
 {
   int k;
@@ -514,6 +545,9 @@ int divide(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c, struct NUMBER *
     if (numComp(&n, b) < 0)
     {
       copyNumber(&n, d);
+      printf("d = ");
+      dispNumber(d);
+      printf("\n");
       break;
     }
     increment(c, &m);
@@ -592,6 +626,88 @@ int fastpower(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
   fastpower(a, &n, &p);
   multiple(a, &p, &o);
   copyNumber(&o, c);
+}
+
+int gcd(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c)
+{
+  struct NUMBER d, e, f, g, zero;
+  clearByZero(&d);
+  clearByZero(&e);
+  clearByZero(&f);
+  clearByZero(&g);
+  clearByZero(&zero);
+  //setSign(c, -1);
+  setInt(c, 1);
+  while (1)
+  {
+    clearByZero(c);
+    divide(a, b, &d, c);
+    printf("c = ");
+    dispNumber(c);
+    printf("\n");
+    if (numComp(c, &zero) == 0){
+      copyNumber(b, c);
+      break;
+    }
+    copyNumber(b, a);
+    copyNumber(c, b);
+  }
+}
+
+int lcm(struct NUMBER *a,struct NUMBER *b,struct NUMBER *c){
+  struct NUMBER temp,temp2,temp3;
+  clearByZero(&temp);
+  clearByZero(&temp2);
+  multiple(a,b,&temp);
+  gcd(a, b, &temp2);
+  printf("temp2 = ");
+  dispNumber(&temp2);
+  printf("\n");
+  divide(&temp, &temp2, c, &temp3);
+  dispNumber(c);
+}
+
+int squareroot(struct NUMBER *a, struct NUMBER *b)
+{
+  struct NUMBER c,temp,two;
+  clearByZero(&c);
+  clearByZero(&temp);
+  clearByZero(&two);
+  if(numComp(a,&temp) == -1){
+    return -1;
+  }
+  setInt(&c,1);
+  setInt(&two, 2);
+  while(numComp(a,&c) != -1){
+    sub(a, &c, &temp);
+    copyNumber(&temp,a);
+    clearByZero(&temp);
+    add(&c, &two, &temp);
+    copyNumber(&temp,&c);
+    clearByZero(&temp);
+    increment(b,&temp);
+    copyNumber(&temp, b);
+    clearByZero(&temp);
+  }
+}
+
+int isprime(struct NUMBER *a){
+  struct NUMBER b,temp,temp2,temp3;
+  clearByZero(&b);
+  clearByZero(&temp2);
+  clearByZero(&temp3);
+  setInt(&b, 2);
+  while(isZero(a) == -1){
+    clearByZero(&temp2);
+    divide(a, &b, &temp, &temp2);
+    if(isZero(&temp2)){
+      return 1;
+    }
+    increment(&b,&temp3);
+    copyNumber(&temp3, &b);
+    clearByZero(&temp3);
+  }
+  return 0;
 }
 
 // set integer to NUMBER
@@ -756,4 +872,71 @@ void pcg32_init(uint64_t seed)
 {
   pcg_state = seed + pcg_increment;
   (void)pcg32();
+}
+
+uint64_t simpleArchimedes(void)
+{
+  double a0 = 2 * sqrt(3);
+  double b0 = 3;
+  double anext, bnext;
+  double an = a0;
+  double bn = b0;
+  int i = 0;
+  while (i < 100000000)
+  {
+    anext = (2 * an * bn) / (an + bn);
+    bnext = sqrt(anext * bn);
+    an = anext;
+    bn = bnext;
+    printf("an = %.80lf\n", an);
+    i++;
+  }
+  printf("%lld", an);
+  return an;
+}
+
+int archimedes(void)
+{
+  struct NUMBER a0, b0, an, bn,anext,bnext,two,three,temp,temp2,temp3,modulo;
+  int i = 0;
+  clearByZero(&a0);
+  clearByZero(&b0);
+  clearByZero(&an);
+  clearByZero(&bn);
+  clearByZero(&anext);
+  clearByZero(&bnext);
+  clearByZero(&two);
+  clearByZero(&three);
+  clearByZero(&temp);
+  clearByZero(&temp2);
+  clearByZero(&temp3);
+
+  setInt(&three, 3);   // 3を多倍長変数に代入
+  squareroot(&three, &temp); // squareroot(3)を求める
+  setInt(&two, 2); // 2を多倍長変数に代入
+  add(&temp, &two, &a0); // squareroot(3) + 2 を a0に代入
+  clearByZero(&temp);
+  setInt(&b0, 3);        // b0に3を代入
+  copyNumber(&a0, &an);  // a0をanにコピー
+  copyNumber(&b0, &bn);  // b0をbnにコピー
+  while(i < 10){  // 何かしらのwhile文
+    multiple(&two, &an, &temp); // 2 * anを計算
+    multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算
+    add(&an, &bn, &temp3);            // an + bnを計算
+    divide(&temp2,&temp3,&anext,&modulo);// (2 * an * bn) / (an * bn)を計算してanextに代入
+    clearByZero(&temp);
+    clearByZero(&temp2);
+    clearByZero(&temp3);
+    multiple(&anext, &bn, &temp); // anext * bnを計算
+    squareroot(&temp, &bnext);    // squareroot(anext * bn)を計算してbnextに代入
+    copyNumber(&anext, &an);      // anextをanにコピー
+    copyNumber(&bnext, &bn);      // bnextをbnにコピー
+    clearByZero(&anext);
+    clearByZero(&bnext);
+    clearByZero(&temp);
+    printf("an = ");
+    dispNumber(&an); // 表示
+    printf("\n");
+    i++; // インクリメント
+  }
 }

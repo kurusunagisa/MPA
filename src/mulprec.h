@@ -46,9 +46,14 @@ int increment(struct NUMBER *, struct NUMBER *);
 int decrement(struct NUMBER *, struct NUMBER *);
 int simpleMultiple(int, int, int *);
 int multiple(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int factorial(struct NUMBER *, struct NUMBER *);
 int simpleDivide(int, int, int *, int *);
 int divide(struct NUMBER *, struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int fastpower(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int gcd(struct NUMBER *, struct NUMBER *,struct NUMBER *);
+int lcm(struct NUMBER *, struct NUMBER *, struct NUMBER *);
+int squareroot(struct NUMBER *, struct NUMBER *);
+int isprime(struct NUMBER *);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);
@@ -64,3 +69,6 @@ uint32_t rotr32(uint32_t, unsigned);
 uint32_t pcg32(void);
 void pcg32_init(uint64_t);
 //#pragma GCC diagnostic ignored ""
+
+uint64_t simpleArchimedes(void);
+int archimedes(void);
