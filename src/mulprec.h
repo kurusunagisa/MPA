@@ -53,7 +53,7 @@ int fastpower(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int gcd(struct NUMBER *, struct NUMBER *,struct NUMBER *);
 int lcm(struct NUMBER *, struct NUMBER *, struct NUMBER *);
 int squareroot(struct NUMBER *, struct NUMBER *);
-int isprime(struct NUMBER *);
+int isPrime(struct NUMBER *);
 // 変換系
 int setInt(struct NUMBER *, int);
 int setIntFromString(struct NUMBER *, char *);
