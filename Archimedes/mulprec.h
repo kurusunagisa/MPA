@@ -6,38 +6,41 @@
 #include <string.h>
 #include <math.h>
 
-#define KETA 30
+#define KETA 200
 #define TEST_MAX 3000000
+#define RADIX 10000
 // unsigned longの上限 4294967295
-// 65535まで
-struct NUMBER{
+// 9999まで
+typedef struct
+{
   unsigned long n[KETA];
   int sign;
-};
+} NUMBER;
 
 // 表示系
-void dispNumber(struct NUMBER *);
-void fdispNumber(struct NUMBER *, FILE *);
+void dispNumber(NUMBER *);
+void fdispNumber(NUMBER *, FILE *);
 // 設定系
-void clearByZero(struct NUMBER *);
-void copyNumber(struct NUMBER *, struct NUMBER *);
-int numComp(struct NUMBER *, struct NUMBER *);
-int setSign(struct NUMBER *, int);
-int getSign(struct NUMBER *);
+void clearByZero(NUMBER *);
+int setSign(NUMBER *, int);
+int getSign(NUMBER *);
+void getAbs(NUMBER *, NUMBER *);
+void copyNumber(NUMBER *, NUMBER *);
+int numComp(NUMBER *, NUMBER *);
+void swap(NUMBER *, NUMBER *);
+int isZero(NUMBER *);
 // 計算系
-int mulBy10(struct NUMBER *, struct NUMBER *);
-int mulByN(struct NUMBER *, int, struct NUMBER *);
-int add(struct NUMBER *, struct NUMBER *, struct NUMBER *);
-int sub(struct NUMBER *, struct NUMBER *, struct NUMBER *);
-int increment(struct NUMBER *, struct NUMBER *);
-int multiple(struct NUMBER *, struct NUMBER *, struct NUMBER *);
-int divide(struct NUMBER *, struct NUMBER *, struct NUMBER *, struct NUMBER *);
-int fastpower(struct NUMBER *, struct NUMBER *, struct NUMBER *);
-int squareroot(struct NUMBER *, struct NUMBER *);
-int sqrt_newton(struct NUMBER *, struct NUMBER *);
+int mulBy10000(NUMBER *, NUMBER *);
+int mulByN(NUMBER *, NUMBER *,int);
+int add(NUMBER *, NUMBER *, NUMBER *);
+int sub(NUMBER *, NUMBER *, NUMBER *);
+int increment(NUMBER *, NUMBER *);
+int decrement(NUMBER *, NUMBER *);
+int multiple(NUMBER *, NUMBER *, NUMBER *);
+int divide(NUMBER *, NUMBER *, NUMBER *, NUMBER *);
+int fastpower(NUMBER *, NUMBER *, NUMBER *);
+int squareroot(NUMBER *,NUMBER *);
+int sqrt_newton(NUMBER *, NUMBER *);
 // 変換系
-int setInt(struct NUMBER *, int);
-int setIntFromString(struct NUMBER *, char *);
-int getInt(struct NUMBER *, int *);
-int getIntAsString(struct NUMBER *, char *);
-int ctoi(char);
+int setInt(NUMBER *, int);
+int getInt(NUMBER *, int*);

@@ -691,16 +691,18 @@ int squareroot(struct NUMBER *a, struct NUMBER *b)
   }
 }
 
-int isprime(struct NUMBER *a){
+int isPrime(struct NUMBER *a){
   struct NUMBER b,temp,temp2,temp3;
   clearByZero(&b);
   clearByZero(&temp2);
   clearByZero(&temp3);
   setInt(&b, 2);
-  while(isZero(a) == -1){
+  while(numComp(a,&b) != 0){
     clearByZero(&temp2);
     divide(a, &b, &temp, &temp2);
-    if(isZero(&temp2)){
+    dispNumber(&temp2);
+    printf("\n");
+    if(isZero(&temp2) == 0){
       return 1;
     }
     increment(&b,&temp3);
