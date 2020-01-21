@@ -2,10 +2,10 @@
 
 int archimedes(void);
 
-int main(void)
-{
-  printf("return = %d\n", archimedes());
-  /*NUMBER a,b,c,d;
+int main(void) {
+   printf("return = %d\n", archimedes());
+  /*NUMBER a, b, c, d;
+  srand(time(NULL));
   clearByZero(&a);
   clearByZero(&b);
   clearByZero(&c);
@@ -13,19 +13,19 @@ int main(void)
   printf("a = ");
   dispNumber(&a);
   printf("\n");
-  setInt(&a,74);
-  setInt(&b,4);
-  //divide(&a, &b, &c, &d);
-  //fastpower(&a, &b, &c);
-  //squareroot(&a, &c);
-  sqrt_newton(&a,&c);
-  //mulBy10000(&b,&a);
-  //mulByN(&a, &b, 8);
+  setInt(&a,39999999);
+  setInt(&b, 99);
+  // divide(&a, &b, &c, &d);
+  // fastpower(&a, &b, &c);
+  // squareroot(&a, &c);
+  // sqrt_newton(&a,&c);
+  // mulBy10000(&b,&a);
+  // mulByN(&a, &b, 8);
   //add(&a, &b, &c);
-  //sub(&a, &b, &c);
-  //decrement(&a, &c);
-  //multiple(&a, &b, &c);
-  //fastpower(&a, &b, &c);
+   //sub(&a, &b, &c);
+  // decrement(&a, &c);
+   multiple(&a, &b, &c);
+  // fastpower(&a, &b, &c);
   printf("a = ");
   dispNumber(&a);
   printf("\n");
@@ -40,8 +40,7 @@ int main(void)
   printf("\n");*/
 }
 
-int archimedes(void)
-{
+int archimedes(void) {
   NUMBER a0, b0, an, bn, anext, bnext, two, three, temp, temp2, temp3, modulo;
   unsigned int i = 0;
   float x;
@@ -57,15 +56,15 @@ int archimedes(void)
   clearByZero(&temp);
   clearByZero(&temp2);
   clearByZero(&temp3);
-
+  setInt(&two, 2);
   setInt(&three, 3); // 3を多倍長変数に代入
-  mulByN(&three, &temp, 12);
+  mulByN(&three, &temp, DIGIT * 2);
   printf("temp = ");
   dispNumber(&temp);
   printf("\n");
   sqrt_newton(&temp, &temp3); // squareroot(3)を求める
-  setInt(&two, 2);            // 2を多倍長変数に代入
-  mulByN(&two, &temp2, 6);
+  setInt(&temp2, 2);          // 2を多倍長変数に代入
+  // mulByN(&two, &temp2, 3);
   printf("temp2 = ");
   dispNumber(&temp2);
   printf("\n");
@@ -85,18 +84,23 @@ int archimedes(void)
   dispNumber(&a0);
   printf("\n");
   setInt(&temp, 3);
-  mulByN(&temp, &b0, 12); // b0に3を代入
+  mulByN(&temp, &b0, DIGIT); // b0に3を代入
   printf("b0 = ");
   dispNumber(&b0);
   printf("\n");
   copyNumber(&a0, &an); // a0をanにコピー
   copyNumber(&b0, &bn); // b0をbnにコピー
+  printf("an = ");
+  dispNumber(&an);
+  printf("\n");
+  printf("bn = ");
+  dispNumber(&bn);
+  printf("\n");
   clearByZero(&temp);
   clearByZero(&temp2);
   clearByZero(&temp3);
   printf("before\n");
-  while (i < 10)
-  {                             // 何かしらのwhile文
+  while(i < 100) { // 何かしらのwhile文
     /*printf("an = ");
     dispNumber(&an);
     printf("\n");*/
@@ -104,38 +108,39 @@ int archimedes(void)
     /*printf("temp = ");
     dispNumber(&temp);
     printf("\n");*/
-    //printf("A\n");
+    // printf("A\n");
     multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算
     /*printf("temp2 = ");
     dispNumber(&temp2);
     printf("\n");*/
-    //printf("B\n");
-    add(&an, &bn, &temp3);                   // an + bnを計算
+    // printf("B\n");
+    add(&an, &bn, &temp3); // an + bnを計算
     /*printf("temp3 = ");
     dispNumber(&temp3);
     printf("\n");*/
-    divide(&temp2, &temp3, &anext, &modulo); // (2 * an * bn) / (an * bn)を計算してanextに代入
+    divide(&temp2, &temp3, &anext,
+           &modulo); // (2 * an * bn) / (an * bn)を計算してanextに代入
     /*printf("anext = ");
     dispNumber(&anext);
     printf("\n");*/
-    //printf("C\n");
+    // printf("C\n");
     clearByZero(&temp);
     clearByZero(&temp2);
     clearByZero(&temp3);
-    //mulByN(&anext, &temp2, 1);
-    //opyNumber(&temp2, &anext);
+    // mulByN(&anext, &temp2, 1);
+    // opyNumber(&temp2, &anext);
     multiple(&anext, &bn, &temp); // anext * bnを計算
     /*printf("anext * bn = ");
     dispNumber(&temp);
     printf("\n");*/
-    //printf("D\n");
+    // printf("D\n");
     sqrt_newton(&temp, &bnext); // squareroot(anext * bn)を計算してbnextに代入
     /*printf("bn = ");
     dispNumber(&bn);
     printf("\n");*/
-    //printf("E\n");
-    ///mulByN(&bnext, &temp3, 1);
-    ///copyNumber(&temp3, &bnext);
+    // printf("E\n");
+    /// mulByN(&bnext, &temp3, 1);
+    /// copyNumber(&temp3, &bnext);
     copyNumber(&anext, &an); // anextをanにコピー
     copyNumber(&bnext, &bn); // bnextをbnにコピー
     clearByZero(&anext);
