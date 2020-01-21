@@ -6,7 +6,8 @@
 #include <string.h>
 #include <math.h>
 
-#define KETA 200
+#define KETA 100
+#define DIGIT 5
 #define TEST_MAX 3000000
 #define RADIX 10000
 // unsigned longの上限 4294967295
