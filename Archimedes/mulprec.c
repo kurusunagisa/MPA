@@ -157,7 +157,7 @@ int mulByN(NUMBER *a, NUMBER *b, int N) {
 }
 
 int add(NUMBER *a, NUMBER *b, NUMBER *c) {
-  int i, e = 0, d;
+  unsigned long i, e = 0, d;
   NUMBER x, y;
   clearByZero(&x);
   clearByZero(&y);
@@ -187,18 +187,22 @@ int add(NUMBER *a, NUMBER *b, NUMBER *c) {
 // 300000000 - 88889999とかだと8888のところで300000000側で0000 - 1
 // が発生してマイナスになってしまう
 int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
-  int i, h = 0, flag = 0;
+  int i, flag = 0,flag2 = 0;
+  long ai, bi, ci;
+  long h = 0;
   NUMBER x, y;
   clearByZero(&x);
   clearByZero(&y);
   if(getSign(b) == -1) {
     getAbs(b, &y);
-    return add(a, &y, c);
+    add(a, &y, c);
+    return 0;
   }
   if(getSign(a) == -1 && getSign(b) == +1) {
     getAbs(a, &x);
+    add(&x, b, c);
     setSign(c, -1);
-    return add(&x, b, c);
+    return 0;
   }
   if(numComp(a, b) < 0) {
     swap(a, b);
@@ -208,15 +212,23 @@ int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
     setSign(c, +1);
   }
   for(i = 0; i < KETA; i++) {
-    if(a->n[i] > 0)
-      a->n[i] -= h;
-    if(a->n[i] >= b->n[i]) {
-      c->n[i] = a->n[i] - b->n[i];
+    ai = a->n[i];
+    bi = b->n[i];
+    ai -= h;
+    if(ai < 0){
+      ai = 9999;
+      flag2 = 1;
+    }
+    if(ai >= bi) {
+      c->n[i] = ai - bi;
+      if(ai == 9999 && flag2 == 1){
+        h = 1;
+        flag2 = 0;
+      }else{
       h = 0;
+      }
     } else {
-      c->n[i] = RADIX + a->n[i] - b->n[i];
-      if(h == 1 && a->n[i] == 0)
-        c->n[i]--;
+        c->n[i] = RADIX + ai - bi;
       h = 1;
     }
   }
@@ -246,8 +258,8 @@ int decrement(NUMBER *a, NUMBER *b) {
 }
 
 int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
-  int i = 0, j = 0,   r;
-  unsigned long aj, e, bi, h;
+  int i = 0, j = 0, r;
+  unsigned long aj, e, bi, h = 0;
   NUMBER d, f, x, y;
   if(getSign(a) == -1 && getSign(b) == +1) {
     getAbs(a, &x);
@@ -271,19 +283,28 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
     bi = b->n[i];
     h = 0;
     clearByZero(&d);
-    for(j = 0; j < KETA; j++) {
-      aj = a->n[j];
-      e = aj * bi + h;
-      if(j + i >= KETA) {
-        // printf("j = %d i = %d aj = %d bi = %d e = %d\n", j, i, aj, bi, e);
-        if(e != 0) {
-          return -1;
-        }
-        break;
+    // これいる？
+    if(bi == 0){
+      for(j = 0; j < KETA; j++){
+        d.n[j + i] = 0;
       }
-      //printf("j = %d i = %d aj = %d bi = %d e = %d\n", j, i, aj, bi, e);
-      d.n[j + i] = e % RADIX;
-      h = e / RADIX;
+    }else if(bi == 1){
+      for(j = 0; j < KETA; j++){
+        d.n[j + i] = a->n[j];
+      }
+    }else{
+      for(j = 0; j < KETA; j++) {
+        aj = a->n[j];
+        e = aj * bi + h;
+        if(j + i >= KETA) {
+          if(e != 0) {
+            return -1;
+          }
+          break;
+        }
+        d.n[j + i] = e % RADIX;
+        h = e / RADIX;
+      }
     }
     if(h != 0)
       return -1;
@@ -294,6 +315,10 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   }
   return 0;
 }
+/*
+int karatsuba(NUMBER *a, NUMBER *b, NUMBER *c) {
+  
+}*/
 
 int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   NUMBER e, f, m, n, p, q, temp, temp2, ten;
@@ -379,10 +404,6 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   return 0;
 }
 /*
-int multiple(NUMBER *a, NUMBER *b, NUMBER *c)
-{
-  // カラツバ
-}
 
 int divide(NUMBER *a, NUMBER *b, NUMBER *c)
 {
@@ -415,18 +436,10 @@ int fastpower(NUMBER *a, NUMBER *b, NUMBER *c) {
     setInt(&o, x / 2);
     clearByZero(&p);
     fastpower(&m, &o, &p);
-    /*printf("p1 = ");
-    dispNumber(&p);
-    printf("\n");*/
   }
   decrement(b, &n);
-  // copyNumber(&n, b);
-  // clearByZero(&n);
   clearByZero(&p);
   fastpower(a, &n, &p);
-  /*printf("p0 = ");
-  dispNumber(&p);
-  printf("\n");*/
   multiple(a, &p, c);
 }
 int squareroot(NUMBER *a, NUMBER *b) {
@@ -579,7 +592,7 @@ int sqrt_newton(NUMBER *a, NUMBER *b)
 }
 */
 
-int setInt(NUMBER *a, int x) {
+int setInt(NUMBER *a, long x) {
   int i = 0;
   if(x < 0) {
     setSign(a, -1);
@@ -608,9 +621,7 @@ int getInt(NUMBER *a, int *x) {
       return -1;
     } else {
       *x += a->n[i] * temp;
-      // printf("a->n[%d] = %d\n", i, a->n[i]);
       temp *= RADIX;
-      // printf("*x = %d\n", *x);
     }
   }
   if(getSign(a) != 1) {

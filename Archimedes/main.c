@@ -1,11 +1,15 @@
+//TODO:カラツバ 平方根の逆数を求めてNを掛ける方法 逆数をとる除算
+//MEMO:桁数は上からsearchすればほぼO(1)でできる
 #include "mulprec.h"
 
 int archimedes(void);
 
 int main(void) {
-   printf("return = %d\n", archimedes());
+  printf("return = %d\n", archimedes());
   /*NUMBER a, b, c, d;
-  srand(time(NULL));
+  int count = 0, data1, data2,data3;
+  FILE *FP, *FP2;
+  srandom(time(NULL));
   clearByZero(&a);
   clearByZero(&b);
   clearByZero(&c);
@@ -13,8 +17,52 @@ int main(void) {
   printf("a = ");
   dispNumber(&a);
   printf("\n");
-  setInt(&a,39999999);
-  setInt(&b, 99);
+  setInt(&a, 1739212129);
+  setInt(&b, 888888888);
+  if((FP = fopen("check.txt", "w")) == NULL) {
+    fprintf(stderr, "cannot open the file.");
+    exit(-500);
+  }
+  if((FP2 = fopen("check2.txt", "w")) == NULL) {
+    fprintf(stderr, "cannot open the file.");
+    exit(-500);
+  }
+  while(count < 1000000) {
+    clearByZero(&a);
+    clearByZero(&b);
+    clearByZero(&c);
+    data1 = random() % 100000000;
+    data2 = random() % 100 + 1;
+    setInt(&a, data1);
+    setInt(&b, data2);
+    setSign(&a, random() % 2 == 1 ? +1 : -1);
+    if(getSign(&a) == -1){
+      data1 -= data1 * 2;
+    }
+    setSign(&b, random() % 2 == 1 ? +1 : -1);
+    if(getSign(&b) == -1) {
+      data2 -= data2 * 2;
+    }
+    // printf("data1 = %d data2 = %d\n", data1, data2);
+    divide(&a, &b, &c,&d);
+    data3 = data1 / data2;
+    setInt(&d, data3);
+    if(numComp(&c, &d) != 0 && isZero(&c) == 0) {
+      printf("a = %d\n", data1);
+      printf("b = %d\n", data2);
+      printf("c = %d\n", data3);
+      dispNumber(&c);
+      printf("\n");
+      break;
+    }
+    fdispNumber(&c, FP);
+    fprintf(FP, "\n");
+    fprintf(FP2, (data3) >= 0 ? "+" : "-");
+    fprintf(FP2, "%080d\n", abs(data3));
+    count++;
+  }
+  fclose(FP);
+  fclose(FP2);
   // divide(&a, &b, &c, &d);
   // fastpower(&a, &b, &c);
   // squareroot(&a, &c);
@@ -24,7 +72,7 @@ int main(void) {
   //add(&a, &b, &c);
    //sub(&a, &b, &c);
   // decrement(&a, &c);
-   multiple(&a, &b, &c);
+  multiple(&a, &b, &c);
   // fastpower(&a, &b, &c);
   printf("a = ");
   dispNumber(&a);
@@ -100,7 +148,8 @@ int archimedes(void) {
   clearByZero(&temp2);
   clearByZero(&temp3);
   printf("before\n");
-  while(i < 100) { // 何かしらのwhile文
+  while(i < 1000) { // 何かしらのwhile文
+    printf("%d回目 : \n", i + 1);
     /*printf("an = ");
     dispNumber(&an);
     printf("\n");*/
