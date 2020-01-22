@@ -7,7 +7,7 @@
 #include <math.h>
 
 #define KETA 100
-#define DIGIT 5
+#define DIGIT 15
 #define TEST_MAX 3000000
 #define RADIX 10000
 // unsigned longの上限 4294967295
@@ -38,10 +38,11 @@ int sub(NUMBER *, NUMBER *, NUMBER *);
 int increment(NUMBER *, NUMBER *);
 int decrement(NUMBER *, NUMBER *);
 int multiple(NUMBER *, NUMBER *, NUMBER *);
+int karatsuba(NUMBER *, NUMBER *, NUMBER *);
 int divide(NUMBER *, NUMBER *, NUMBER *, NUMBER *);
 int fastpower(NUMBER *, NUMBER *, NUMBER *);
 int squareroot(NUMBER *,NUMBER *);
 int sqrt_newton(NUMBER *, NUMBER *);
 // 変換系
-int setInt(NUMBER *, int);
+int setInt(NUMBER *, long);
 int getInt(NUMBER *, int*);
