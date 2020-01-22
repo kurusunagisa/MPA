@@ -66,6 +66,15 @@ void copyNumber(NUMBER *a, NUMBER *b) {
   setSign(b, getSign(a));
 }
 
+void copyPartOfNumber(NUMBER *a, NUMBER *b, int x, int y) {
+  int i;
+  int count = 0;
+  for(i = x; i < y; i++) {
+    b->n[count] = a->n[i];
+    count++;
+  }
+}
+
 // compare a and b
 int numComp(NUMBER *a, NUMBER *b) {
   int i;
@@ -125,6 +134,16 @@ int isZero(NUMBER *a) {
     }
   }
   return 1;
+}
+
+int searchKeta(NUMBER *a) {
+  int i;
+  for(i = KETA - 1; i >= 0; i--) {
+    if(a->n[i] != 0) {
+      return i + 1;
+    }
+  }
+  return 0;
 }
 
 // left bit shift
@@ -187,7 +206,7 @@ int add(NUMBER *a, NUMBER *b, NUMBER *c) {
 // 300000000 - 88889999とかだと8888のところで300000000側で0000 - 1
 // が発生してマイナスになってしまう
 int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
-  int i, flag = 0,flag2 = 0;
+  int i, flag = 0, flag2 = 0;
   long ai, bi, ci;
   long h = 0;
   NUMBER x, y;
@@ -215,20 +234,20 @@ int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
     ai = a->n[i];
     bi = b->n[i];
     ai -= h;
-    if(ai < 0){
+    if(ai < 0) {
       ai = 9999;
       flag2 = 1;
     }
     if(ai >= bi) {
       c->n[i] = ai - bi;
-      if(ai == 9999 && flag2 == 1){
+      if(ai == 9999 && flag2 == 1) {
         h = 1;
         flag2 = 0;
-      }else{
-      h = 0;
+      } else {
+        h = 0;
       }
     } else {
-        c->n[i] = RADIX + ai - bi;
+      c->n[i] = RADIX + ai - bi;
       h = 1;
     }
   }
@@ -283,16 +302,11 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
     bi = b->n[i];
     h = 0;
     clearByZero(&d);
-    // これいる？
-    if(bi == 0){
-      for(j = 0; j < KETA; j++){
+    if(bi == 0) {
+      for(j = 0; j < KETA; j++) {
         d.n[j + i] = 0;
       }
-    }else if(bi == 1){
-      for(j = 0; j < KETA; j++){
-        d.n[j + i] = a->n[j];
-      }
-    }else{
+    } else {
       for(j = 0; j < KETA; j++) {
         aj = a->n[j];
         e = aj * bi + h;
@@ -317,8 +331,32 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
 }
 /*
 int karatsuba(NUMBER *a, NUMBER *b, NUMBER *c) {
-  
-}*/
+  NUMBER x1, x0, y1, y0,z2,z1,z0,temp1,temp2,temp3,temp4;
+  clearByZero(&x1);
+  clearByZero(&x0);
+  clearByZero(&y1);
+  clearByZero(&y0);
+  clearByZero(&z2);
+  clearByZero(&z1);
+  clearByZero(&z0);
+  clearByZero(&temp1);
+  clearByZero(&temp2);
+  clearByZero(&temp3);
+  clearByZero(&temp4);
+  int r = searchKeta(a);
+  copyPartOfNumber(a, &x1, r / 2, r);
+  copyPartOfNumber(a, &x0, 0, r / 2);
+  multiple(&x0,&y0,&z0);
+  multiple(&x1,&y1,&z2);
+  // ここからz1
+  add(&z2,&z0,&temp1);
+  sub(&x1,&x0,&temp2);
+  sub(&y1,&y0,&temp3);
+  multiple(&temp2,temp3,temp4);
+  sub(&temp1, &temp4,&z1);
+  //ここからc
+}
+*/
 
 int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   NUMBER e, f, m, n, p, q, temp, temp2, ten;
@@ -528,7 +566,7 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
 /*
 int sqrt_newton(NUMBER *a, NUMBER *b)
 {
-  NUMBER w, x, y, z, zero, two, three, temp, tukawanai;
+  NUMBER w, x, y, z, zero, two, three,ten, keta, temp, tukawanai;
   clearByZero(&w);
   clearByZero(&x);
   clearByZero(&y);
@@ -538,11 +576,10 @@ int sqrt_newton(NUMBER *a, NUMBER *b)
   clearByZero(&temp);
   setInt(&two, 2);
   setInt(&three, 3);
-
-  divide(a, &two, &w, &temp); //w = a  /2
-  //printf("w = ");
-  //dispNumber(&w);
-  //printf("\n");
+  setInt(&ten, 10);
+  int r = searchKeta(a);
+  setInt(&keta, r);
+  setSign(&keta, -1);
   if (isZero(&w) == 1)
     copyNumber(a, b);
   if (numComp(&w, &zero) < 0)

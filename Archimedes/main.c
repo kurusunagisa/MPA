@@ -5,7 +5,16 @@
 int archimedes(void);
 
 int main(void) {
-  printf("return = %d\n", archimedes());
+  //printf("return = %d\n", archimedes());
+  NUMBER a,b,c;
+  setInt(&a,1739292929);
+  mulByN(&a, &b, 1);
+  clearByZero(&c);
+  copyPartOfNumber(&b, &c, 1, 3);
+  printf("c = ");
+  dispNumber(&c);
+  printf("\n");
+  //printf("keta = %d\n",searchKeta(&b));
   /*NUMBER a, b, c, d;
   int count = 0, data1, data2,data3;
   FILE *FP, *FP2;
@@ -153,12 +162,12 @@ int archimedes(void) {
     /*printf("an = ");
     dispNumber(&an);
     printf("\n");*/
-    multiple(&two, &an, &temp); // 2 * anを計算
+    multiple(&two, &an, &temp); // 2 * anを計算 -> an * bnをカラツバで計算
     /*printf("temp = ");
     dispNumber(&temp);
     printf("\n");*/
     // printf("A\n");
-    multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算
+    multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算 -> (an * bn) * 2をmultipleで計算
     /*printf("temp2 = ");
     dispNumber(&temp2);
     printf("\n");*/
@@ -168,7 +177,7 @@ int archimedes(void) {
     dispNumber(&temp3);
     printf("\n");*/
     divide(&temp2, &temp3, &anext,
-           &modulo); // (2 * an * bn) / (an * bn)を計算してanextに代入
+           &modulo); // (an * bn * 2) / (an + bn)を計算してanextに代入
     /*printf("anext = ");
     dispNumber(&anext);
     printf("\n");*/
@@ -178,7 +187,7 @@ int archimedes(void) {
     clearByZero(&temp3);
     // mulByN(&anext, &temp2, 1);
     // opyNumber(&temp2, &anext);
-    multiple(&anext, &bn, &temp); // anext * bnを計算
+    multiple(&anext, &bn, &temp); // anext * bnを計算 -> anext * bnをカラツバで計算
     /*printf("anext * bn = ");
     dispNumber(&temp);
     printf("\n");*/
