@@ -6,10 +6,11 @@
 #include <string.h>
 #include <math.h>
 
-#define KETA 100
 #define DIGIT 15
+#define KETA DIGIT * 4
 #define TEST_MAX 3000000
 #define RADIX 10000
+//#define RADIX 1000000000
 // unsigned longの上限 4294967295
 // 9999まで
 typedef struct
@@ -27,9 +28,11 @@ int setSign(NUMBER *, int);
 int getSign(NUMBER *);
 void getAbs(NUMBER *, NUMBER *);
 void copyNumber(NUMBER *, NUMBER *);
+void copyPartOfNumber(NUMBER *, NUMBER *,int,int);
 int numComp(NUMBER *, NUMBER *);
 void swap(NUMBER *, NUMBER *);
 int isZero(NUMBER *);
+int searchKeta(NUMBER *);
 // 計算系
 int mulBy10000(NUMBER *, NUMBER *);
 int mulByN(NUMBER *, NUMBER *,int);
