@@ -615,14 +615,8 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   setInt(&five, 5000);
 
   multiple(a, &five, &temp);
-  printf("temp = ");
-  dispNumber(&temp);
-  printf("\n");
   divBy10000(&temp, &w);
   // divide(a, &two, &w, &temp); // w = a  / 2
-  printf("w = ");
-  dispNumber(&w);
-  printf("\n");
   if(isZero(&w) == 1)
     copyNumber(a, b);
   if(numComp(&w, &zero) < 0)
@@ -650,8 +644,8 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
     // printf("\n");
     clearByZero(&z);
     // printf("wall2\n");
-    multiple(&temp, &five, &temp2);
-    divBy10000(&temp2, &w);
+    // multiple(&temp, &five,&temp2);
+    // divBy10000(&temp2, &w);
     divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
     /*printf("w = ");
     dispNumber(&w);
