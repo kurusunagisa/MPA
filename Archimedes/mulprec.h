@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-#define DIGIT 50
+#define DIGIT 25
 #define KETA DIGIT * 4
 #define TEST_MAX 3000000
 #define RADIX 10000

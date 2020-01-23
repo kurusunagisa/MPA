@@ -137,15 +137,9 @@ int archimedes(void) {
   y = (int)x;
   printf("y = %d\n",y);
   setInt(&a0, y);*/
-  printf("a0 = ");
-  dispNumber(&a0);
-  printf("\n");
+  copyNumber(&a0, &an); // a0をanにコピー
   setInt(&temp, 3);
   mulByN(&temp, &b0, DIGIT); // b0に3を代入
-  printf("b0 = ");
-  dispNumber(&b0);
-  printf("\n");
-  copyNumber(&a0, &an); // a0をanにコピー
   copyNumber(&b0, &bn); // b0をbnにコピー
   printf("an = ");
   dispNumber(&an);
@@ -157,7 +151,7 @@ int archimedes(void) {
   clearByZero(&temp2);
   clearByZero(&temp3);
   printf("before\n");
-  while(i < 100) { // 何かしらのwhile文
+  while(i < DIGIT * 10) { // 何かしらのwhile文
     printf("%d回目 : \n", i + 1);
     /*printf("an = ");
     dispNumber(&an);
@@ -207,9 +201,9 @@ int archimedes(void) {
     clearByZero(&temp);
     clearByZero(&temp2);
     clearByZero(&temp3);
-    printf("an = ");
-    dispNumber(&an); // 表示
-    printf("\n");
     i++; // インクリメント
   }
+  printf("an = ");
+  dispNumber(&an); // 表示
+  printf("\n");
 }
