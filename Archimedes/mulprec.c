@@ -161,6 +161,21 @@ int mulBy10000(NUMBER *a, NUMBER *b) {
   }
 }
 
+// left bit shift
+int divBy10000(NUMBER *a, NUMBER *b) {
+  int i;
+  for(i = 0; i < KETA - 1; i++) {
+    b->n[i] = a->n[i + 1];
+  }
+  setSign(b, getSign(a));
+  b->n[KETA - 1] = 0;
+  if(a->n[KETA - 1] != 0) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
 int mulByN(NUMBER *a, NUMBER *b, int N) {
   int i;
   for(i = 0; i < KETA - 1; i++) {
@@ -298,16 +313,19 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
     r = multiple(&x, &y, c);
     return r;
   }
-  for(i = 0; i < KETA; i++) {
+  int ki = searchKeta(a) + 1;
+  int kj = searchKeta(b) + 1;
+  // printf("ki = %d kj = %d\n", ki, kj);
+  for(i = 0; i < kj; i++) {
     bi = b->n[i];
     h = 0;
     clearByZero(&d);
     if(bi == 0) {
-      for(j = 0; j < KETA; j++) {
+      for(j = 0; j < ki; j++) {
         d.n[j + i] = 0;
       }
     } else {
-      for(j = 0; j < KETA; j++) {
+      for(j = 0; j < ki; j++) {
         aj = a->n[j];
         e = aj * bi + h;
         if(j + i >= KETA) {
@@ -355,6 +373,82 @@ int karatsuba(NUMBER *a, NUMBER *b, NUMBER *c) {
   multiple(&temp2,temp3,temp4);
   sub(&temp1, &temp4,&z1);
   //ここからc
+}
+*/
+
+/*int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
+  NUMBER e, f, m, n, p, q, temp, temp2, ten;
+  int r;
+  setInt(&ten, 10);
+  if(getSign(a) == +1 && getSign(b) == -1) {
+    getAbs(b, &p);
+    r = divide(a, &p, c, d);
+    setSign(c, -1);
+    return r;
+  }
+  if(getSign(a) == -1 && getSign(b) == +1) {
+    getAbs(a, &p);
+    r = divide(&p, b, c, d);
+    setSign(c, -1);
+    setSign(d, -1);
+    return r;
+  }
+  if(getSign(a) == -1 && getSign(b) == -1) {
+    getAbs(a, &p);
+    getAbs(b, &q);
+    r = divide(&p, &q, c, d);
+    setSign(d, -1);
+    return r;
+  }
+  clearByZero(c);
+  clearByZero(d);
+
+  if(isZero(b) == 1) {
+    return -1;
+  }
+
+  copyNumber(a, &n);
+  while(1) {
+    if(numComp(&n, b) < 0) {
+      copyNumber(&n, d);
+      break;
+    }
+    copyNumber(b, &f);
+    setInt(&e, 1);
+    while(1) {
+      copyNumber(&f, &temp2);
+      mulBy10000(&f, &temp);
+      copyNumber(&temp, &f);
+      clearByZero(&temp);
+      if(numComp(&n, &f) != 1) {
+        copyNumber(&temp2, &f);
+        while(1) {
+          copyNumber(&f, &temp2);
+          multiple(&f, &ten, &temp);
+          copyNumber(&temp, &f);
+          clearByZero(&temp);
+          if(numComp(&n, &f) != 1) {
+            break;
+          }
+          multiple(&e, &ten, &temp);
+          copyNumber(&temp, &e);
+          clearByZero(&temp);
+        }
+        copyNumber(&temp2, &f);
+        break;
+      }
+      mulBy10000(&e, &temp);
+      copyNumber(&temp, &e);
+      clearByZero(&temp);
+    }
+    sub(&n, &f, &m);
+    copyNumber(&m, &n);
+    clearByZero(&m);
+    add(c, &e, &m);
+    copyNumber(&m, c);
+    clearByZero(&m);
+  }
+  return 0;
 }
 */
 
@@ -441,6 +535,7 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   }
   return 0;
 }
+
 /*
 
 int divide(NUMBER *a, NUMBER *b, NUMBER *c)
@@ -507,7 +602,7 @@ int squareroot(NUMBER *a, NUMBER *b) {
 }
 
 int sqrt_newton(NUMBER *a, NUMBER *b) {
-  NUMBER w, x, y, z, zero, two, temp, tukawanai;
+  NUMBER w, x, y, z, zero, two, temp, temp2, five, tukawanai;
   clearByZero(&w);
   clearByZero(&x);
   clearByZero(&y);
@@ -515,12 +610,19 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   clearByZero(&zero);
   clearByZero(&two);
   clearByZero(&temp);
+  clearByZero(&temp2);
   setInt(&two, 2);
+  setInt(&five, 5000);
 
-  divide(a, &two, &w, &temp); // w = a  /2
-  // printf("w = ");
-  // dispNumber(&w);
-  // printf("\n");
+  multiple(a, &five, &temp);
+  printf("temp = ");
+  dispNumber(&temp);
+  printf("\n");
+  divBy10000(&temp, &w);
+  // divide(a, &two, &w, &temp); // w = a  / 2
+  printf("w = ");
+  dispNumber(&w);
+  printf("\n");
   if(isZero(&w) == 1)
     copyNumber(a, b);
   if(numComp(&w, &zero) < 0)
@@ -548,6 +650,8 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
     // printf("\n");
     clearByZero(&z);
     // printf("wall2\n");
+    multiple(&temp, &five, &temp2);
+    divBy10000(&temp2, &w);
     divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
     /*printf("w = ");
     dispNumber(&w);

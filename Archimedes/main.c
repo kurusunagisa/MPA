@@ -5,7 +5,7 @@
 int archimedes(void);
 
 int main(void) {
-  //printf("return = %d\n", archimedes());
+  printf("return = %d\n", archimedes());
   NUMBER a,b,c;
   setInt(&a,1739292929);
   mulByN(&a, &b, 1);
@@ -157,7 +157,7 @@ int archimedes(void) {
   clearByZero(&temp2);
   clearByZero(&temp3);
   printf("before\n");
-  while(i < 1000) { // 何かしらのwhile文
+  while(i < 100) { // 何かしらのwhile文
     printf("%d回目 : \n", i + 1);
     /*printf("an = ");
     dispNumber(&an);
@@ -178,6 +178,7 @@ int archimedes(void) {
     printf("\n");*/
     divide(&temp2, &temp3, &anext,
            &modulo); // (an * bn * 2) / (an + bn)を計算してanextに代入
+    // (an * bn) / (an + bn) -> ((an * bn) / (an + bn)) * 2のほうが速いかも
     /*printf("anext = ");
     dispNumber(&anext);
     printf("\n");*/

@@ -1,20 +1,19 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <assert.h>
-#include <string.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
-#define DIGIT 15
+#define DIGIT 50
 #define KETA DIGIT * 4
 #define TEST_MAX 3000000
 #define RADIX 10000
 //#define RADIX 1000000000
 // unsigned longの上限 4294967295
 // 9999まで
-typedef struct
-{
+typedef struct {
   unsigned long n[KETA];
   int sign;
 } NUMBER;
@@ -28,14 +27,15 @@ int setSign(NUMBER *, int);
 int getSign(NUMBER *);
 void getAbs(NUMBER *, NUMBER *);
 void copyNumber(NUMBER *, NUMBER *);
-void copyPartOfNumber(NUMBER *, NUMBER *,int,int);
+void copyPartOfNumber(NUMBER *, NUMBER *, int, int);
 int numComp(NUMBER *, NUMBER *);
 void swap(NUMBER *, NUMBER *);
 int isZero(NUMBER *);
 int searchKeta(NUMBER *);
 // 計算系
 int mulBy10000(NUMBER *, NUMBER *);
-int mulByN(NUMBER *, NUMBER *,int);
+int divBy10000(NUMBER *, NUMBER *);
+int mulByN(NUMBER *, NUMBER *, int);
 int add(NUMBER *, NUMBER *, NUMBER *);
 int sub(NUMBER *, NUMBER *, NUMBER *);
 int increment(NUMBER *, NUMBER *);
@@ -44,8 +44,8 @@ int multiple(NUMBER *, NUMBER *, NUMBER *);
 int karatsuba(NUMBER *, NUMBER *, NUMBER *);
 int divide(NUMBER *, NUMBER *, NUMBER *, NUMBER *);
 int fastpower(NUMBER *, NUMBER *, NUMBER *);
-int squareroot(NUMBER *,NUMBER *);
+int squareroot(NUMBER *, NUMBER *);
 int sqrt_newton(NUMBER *, NUMBER *);
 // 変換系
 int setInt(NUMBER *, long);
-int getInt(NUMBER *, int*);
+int getInt(NUMBER *, int *);
