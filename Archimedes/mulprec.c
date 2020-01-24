@@ -1,5 +1,6 @@
 #include "mulprec.h"
 
+NUMBER clear = {0};
 // display Multiple Number
 void dispNumber(NUMBER *a) {
   int i;
@@ -10,7 +11,7 @@ void dispNumber(NUMBER *a) {
     printf("-");
   }
   for(i = KETA - 1; i >= 0; i--) {
-    printf("%5ld", a->n[i]);
+    printf("%04ld", a->n[i]);
   }
 }
 
@@ -30,12 +31,14 @@ void fdispNumber(NUMBER *a, FILE *FP) {
 
 // clear Number by ZERO
 void clearByZero(NUMBER *a) {
-  int i;
+  setSign(&clear,+1);
+  *a = clear;
+  /*int i;
 
   for(i = 0; i < KETA; i++) {
     a->n[i] = 0;
   }
-  setSign(a, +1);
+  setSign(a, +1);*/
 }
 
 // set a's Signature from s
@@ -59,11 +62,12 @@ void getAbs(NUMBER *a, NUMBER *b) {
 
 // copy NUMBER a to b
 void copyNumber(NUMBER *a, NUMBER *b) {
-  int i;
+  *b = *a;
+  /*int i;
   for(i = 0; i < KETA; i++) {
     b->n[i] = a->n[i];
   }
-  setSign(b, getSign(a));
+  setSign(b, getSign(a));*/
 }
 
 void copyPartOfNumber(NUMBER *a, NUMBER *b, int x, int y) {
@@ -315,7 +319,8 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   }
   int ki = searchKeta(a) + 1;
   int kj = searchKeta(b) + 1;
-  // printf("ki = %d kj = %d\n", ki, kj);
+  // int kj = searchKeta(b);
+  //printf("ki = %d kj = %d\n", ki, kj);
   for(i = 0; i < kj; i++) {
     bi = b->n[i];
     h = 0;
@@ -575,48 +580,22 @@ int fastpower(NUMBER *a, NUMBER *b, NUMBER *c) {
   fastpower(a, &n, &p);
   multiple(a, &p, c);
 }
-int squareroot(NUMBER *a, NUMBER *b) {
-  NUMBER c, temp, two;
-  clearByZero(&c);
-  clearByZero(&temp);
-  clearByZero(&two);
-  if(numComp(a, &temp) == -1) {
-    return -1;
-  }
-  setInt(&c, 1);
-  setInt(&two, 2);
-  while(numComp(a, &c) != -1) {
-    sub(a, &c, &temp);
-    copyNumber(&temp, a);
-    clearByZero(&temp);
-    add(&c, &two, &temp);
-    copyNumber(&temp, &c);
-    clearByZero(&temp);
-    increment(b, &temp);
-    copyNumber(&temp, b);
-    clearByZero(&temp);
-    // printf("b = ");
-    // dispNumber(b);
-    // printf("\n");
-  }
-}
-
 int sqrt_newton(NUMBER *a, NUMBER *b) {
-  NUMBER w, x, y, z, zero, two, temp, temp2, five, tukawanai;
+  NUMBER w, x, y, z, zero, two,three, temp,temp2,temp3,five, tukawanai;
   clearByZero(&w);
   clearByZero(&x);
   clearByZero(&y);
   clearByZero(&z);
-  clearByZero(&zero);
   clearByZero(&two);
   clearByZero(&temp);
   clearByZero(&temp2);
   setInt(&two, 2);
+  setInt(&three, 3);
   setInt(&five, 5000);
 
-  multiple(a, &five, &temp);
-  divBy10000(&temp, &w);
-  // divide(a, &two, &w, &temp); // w = a  / 2
+  //multiple(a,&five,&temp);
+  //divBy10000(&temp, &w);
+  divide(a, &three, &w, &temp); // w = a  / 3
   if(isZero(&w) == 1)
     copyNumber(a, b);
   if(numComp(&w, &zero) < 0)
@@ -639,14 +618,19 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
     // dispNumber(&z);
     // printf("\n");
     add(&x, &z, &temp); // temp = b + z
-    // printf("temp = ");
-    // dispNumber(&temp);
-    // printf("\n");
+    /*printf("t = ");
+    dispNumber(&temp);
+    printf("\n");*/
     clearByZero(&z);
     // printf("wall2\n");
-    // multiple(&temp, &five,&temp2);
-    // divBy10000(&temp2, &w);
-    divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
+    setInt(&five, 5000);
+    //clearByZero(&temp);
+    clearByZero(&temp2);
+    clearByZero(&temp3);
+    clearByZero(&w);
+    multiple(&temp, &five,&temp2);
+    divBy10000(&temp2, &w);
+    //divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
     /*printf("w = ");
     dispNumber(&w);
     printf("\n\n");*/

@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <time.h>
 
-#define DIGIT 25
+#define DIGIT 50
 #define KETA DIGIT * 4
 #define TEST_MAX 3000000
 #define RADIX 10000

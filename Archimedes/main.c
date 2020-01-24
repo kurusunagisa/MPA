@@ -6,14 +6,17 @@ int archimedes(void);
 
 int main(void) {
   printf("return = %d\n", archimedes());
-  NUMBER a,b,c;
+  /*NUMBER a,b,c;
   setInt(&a,1739292929);
   mulByN(&a, &b, 1);
-  clearByZero(&c);
-  copyPartOfNumber(&b, &c, 1, 3);
+  setInt(&c, -50000);
+  clearByZero(&a);
+  clearByZero(&b);
+  clearByZero(&c);*/
+  /*copyPartOfNumber(&b, &c, 1, 3);
   printf("c = ");
   dispNumber(&c);
-  printf("\n");
+  printf("\n");*/
   //printf("keta = %d\n",searchKeta(&b));
   /*NUMBER a, b, c, d;
   int count = 0, data1, data2,data3;
@@ -82,8 +85,8 @@ int main(void) {
    //sub(&a, &b, &c);
   // decrement(&a, &c);
   multiple(&a, &b, &c);
-  // fastpower(&a, &b, &c);
-  printf("a = ");
+  // fastpower(&a, &b, &c);*/
+  /*printf("a = ");
   dispNumber(&a);
   printf("\n");
   printf("b = ");
@@ -91,13 +94,14 @@ int main(void) {
   printf("\n");
   printf("c = ");
   dispNumber(&c);
-  printf("\n");
-  printf("d = ");
-  dispNumber(&d);
   printf("\n");*/
 }
 
 int archimedes(void) {
+  struct timeval tv;
+  double tstart, tend,loopstart,loopend;
+  gettimeofday(&tv, NULL);
+  tstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
   NUMBER a0, b0, an, bn, anext, bnext, two, three, temp, temp2, temp3, modulo;
   unsigned int i = 0;
   float x;
@@ -116,19 +120,9 @@ int archimedes(void) {
   setInt(&two, 2);
   setInt(&three, 3); // 3を多倍長変数に代入
   mulByN(&three, &temp, DIGIT * 2);
-  printf("temp = ");
-  dispNumber(&temp);
-  printf("\n");
   sqrt_newton(&temp, &temp3); // squareroot(3)を求める
   setInt(&temp2, 2);          // 2を多倍長変数に代入
-  // mulByN(&two, &temp2, 3);
-  printf("temp2 = ");
-  dispNumber(&temp2);
-  printf("\n");
-  printf("temp3 = ");
-  dispNumber(&temp3);
-  printf("\n");
-  multiple(&temp2, &temp3, &a0); // squareroot(3)*2 を a0に代入
+  multiple(&temp3, &temp2, &a0); // squareroot(3)*2 を a0に代入
   clearByZero(&temp);
   clearByZero(&temp2);
   clearByZero(&temp3);
@@ -150,8 +144,12 @@ int archimedes(void) {
   clearByZero(&temp);
   clearByZero(&temp2);
   clearByZero(&temp3);
-  printf("before\n");
+  gettimeofday(&tv, NULL);
+  tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+  printf("time = %lf\n", tend - tstart);
   while(i < DIGIT * 10) { // 何かしらのwhile文
+    gettimeofday(&tv, NULL);
+    loopstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
     printf("%d回目 : \n", i + 1);
     /*printf("an = ");
     dispNumber(&an);
@@ -162,6 +160,9 @@ int archimedes(void) {
     printf("\n");*/
     // printf("A\n");
     multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算 -> (an * bn) * 2をmultipleで計算
+    gettimeofday(&tv, NULL);
+    tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("twomultipletime = %lf\n", tend - loopstart);
     /*printf("temp2 = ");
     dispNumber(&temp2);
     printf("\n");*/
@@ -172,6 +173,9 @@ int archimedes(void) {
     printf("\n");*/
     divide(&temp2, &temp3, &anext,
            &modulo); // (an * bn * 2) / (an + bn)を計算してanextに代入
+    gettimeofday(&tv, NULL);
+    tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("dividetime = %lf\n", tend - loopstart);
     // (an * bn) / (an + bn) -> ((an * bn) / (an + bn)) * 2のほうが速いかも
     /*printf("anext = ");
     dispNumber(&anext);
@@ -182,12 +186,18 @@ int archimedes(void) {
     clearByZero(&temp3);
     // mulByN(&anext, &temp2, 1);
     // opyNumber(&temp2, &anext);
-    multiple(&anext, &bn, &temp); // anext * bnを計算 -> anext * bnをカラツバで計算
+    multiple(&anext, &bn, &temp); // anext * bnを計算
     /*printf("anext * bn = ");
     dispNumber(&temp);
     printf("\n");*/
     // printf("D\n");
+    if(numComp(&anext,&an) == 0){
+      break;
+    }
     sqrt_newton(&temp, &bnext); // squareroot(anext * bn)を計算してbnextに代入
+    gettimeofday(&tv, NULL);
+    tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("newtontime = %lf\n", tend - loopstart);
     /*printf("bn = ");
     dispNumber(&bn);
     printf("\n");*/
@@ -202,7 +212,14 @@ int archimedes(void) {
     clearByZero(&temp2);
     clearByZero(&temp3);
     i++; // インクリメント
+    gettimeofday(&tv, NULL);
+    loopend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("loop time = %lf\n", loopend - loopstart);
+    printf("total time = %lf\n", loopend - tstart);
   }
+  gettimeofday(&tv, NULL);
+  tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+  printf("total time = %lf\n", tend - tstart);
   printf("an = ");
   dispNumber(&an); // 表示
   printf("\n");
