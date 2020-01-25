@@ -7,9 +7,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define DIGIT 77
-#define KETA DIGIT * 4
-#define SHIFT 2
+#define DIGIT 12
+#define KETA DIGIT * 5
+#define SHIFT 1
 #define TEST_MAX 3000000
 #define RADIX 10000
 
