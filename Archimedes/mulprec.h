@@ -7,13 +7,12 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define DIGIT 50
+#define DIGIT 77
 #define KETA DIGIT * 4
+#define SHIFT 2
 #define TEST_MAX 3000000
 #define RADIX 10000
-//#define RADIX 1000000000
-// unsigned longの上限 4294967295
-// 9999まで
+
 typedef struct {
   unsigned long n[KETA];
   int sign;
@@ -26,9 +25,9 @@ void fdispNumber(NUMBER *, FILE *);
 void clearByZero(NUMBER *);
 int setSign(NUMBER *, int);
 int getSign(NUMBER *);
+void setClear();
 void getAbs(NUMBER *, NUMBER *);
 void copyNumber(NUMBER *, NUMBER *);
-void copyPartOfNumber(NUMBER *, NUMBER *, int, int);
 int numComp(NUMBER *, NUMBER *);
 void swap(NUMBER *, NUMBER *);
 int isZero(NUMBER *);
@@ -42,7 +41,6 @@ int sub(NUMBER *, NUMBER *, NUMBER *);
 int increment(NUMBER *, NUMBER *);
 int decrement(NUMBER *, NUMBER *);
 int multiple(NUMBER *, NUMBER *, NUMBER *);
-int karatsuba(NUMBER *, NUMBER *, NUMBER *);
 int divide(NUMBER *, NUMBER *, NUMBER *, NUMBER *);
 int fastpower(NUMBER *, NUMBER *, NUMBER *);
 int squareroot(NUMBER *, NUMBER *);
