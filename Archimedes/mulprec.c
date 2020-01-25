@@ -11,7 +11,7 @@ void dispNumber(NUMBER *a) {
     printf("-");
   }
   for(i = KETA - 1; i >= 0; i--) {
-    printf("%04ld", a->n[i]);
+    printf("%04ld ", a->n[i]);
   }
 }
 
@@ -31,14 +31,7 @@ void fdispNumber(NUMBER *a, FILE *FP) {
 
 // clear Number by ZERO
 void clearByZero(NUMBER *a) {
-  setSign(&clear,+1);
   *a = clear;
-  /*int i;
-
-  for(i = 0; i < KETA; i++) {
-    a->n[i] = 0;
-  }
-  setSign(a, +1);*/
 }
 
 // set a's Signature from s
@@ -60,23 +53,13 @@ void getAbs(NUMBER *a, NUMBER *b) {
   setSign(b, +1);
 }
 
+void setClear() {
+  setSign(&clear, +1);
+}
+
 // copy NUMBER a to b
 void copyNumber(NUMBER *a, NUMBER *b) {
   *b = *a;
-  /*int i;
-  for(i = 0; i < KETA; i++) {
-    b->n[i] = a->n[i];
-  }
-  setSign(b, getSign(a));*/
-}
-
-void copyPartOfNumber(NUMBER *a, NUMBER *b, int x, int y) {
-  int i;
-  int count = 0;
-  for(i = x; i < y; i++) {
-    b->n[count] = a->n[i];
-    count++;
-  }
 }
 
 // compare a and b
@@ -186,7 +169,9 @@ int mulByN(NUMBER *a, NUMBER *b, int N) {
     b->n[i + N] = a->n[i];
   }
   setSign(b, getSign(a));
-  b->n[0] = 0;
+  for(i = 0;i < N;i++){
+    b->n[i] = 0;
+  }
   if(a->n[0] != 0) {
     return -1;
   } else {
@@ -221,12 +206,9 @@ int add(NUMBER *a, NUMBER *b, NUMBER *c) {
   return e != 0 ? -1 : 0;
 }
 
-// 上の桁から引けないときは更に上の桁から引かないといけない
-// 300000000 - 88889999とかだと8888のところで300000000側で0000 - 1
-// が発生してマイナスになってしまう
 int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
   int i, flag = 0, flag2 = 0;
-  long ai, bi, ci;
+  long ai, bi;
   long h = 0;
   NUMBER x, y;
   clearByZero(&x);
@@ -279,11 +261,8 @@ int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
 int increment(NUMBER *a, NUMBER *b) {
   NUMBER one;
   int r;
-
   setInt(&one, +1);
-
   r = add(a, &one, b);
-
   return r;
 }
 
@@ -319,8 +298,6 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   }
   int ki = searchKeta(a) + 1;
   int kj = searchKeta(b) + 1;
-  // int kj = searchKeta(b);
-  //printf("ki = %d kj = %d\n", ki, kj);
   for(i = 0; i < kj; i++) {
     bi = b->n[i];
     h = 0;
@@ -352,110 +329,7 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   }
   return 0;
 }
-/*
-int karatsuba(NUMBER *a, NUMBER *b, NUMBER *c) {
-  NUMBER x1, x0, y1, y0,z2,z1,z0,temp1,temp2,temp3,temp4;
-  clearByZero(&x1);
-  clearByZero(&x0);
-  clearByZero(&y1);
-  clearByZero(&y0);
-  clearByZero(&z2);
-  clearByZero(&z1);
-  clearByZero(&z0);
-  clearByZero(&temp1);
-  clearByZero(&temp2);
-  clearByZero(&temp3);
-  clearByZero(&temp4);
-  int r = searchKeta(a);
-  copyPartOfNumber(a, &x1, r / 2, r);
-  copyPartOfNumber(a, &x0, 0, r / 2);
-  multiple(&x0,&y0,&z0);
-  multiple(&x1,&y1,&z2);
-  // ここからz1
-  add(&z2,&z0,&temp1);
-  sub(&x1,&x0,&temp2);
-  sub(&y1,&y0,&temp3);
-  multiple(&temp2,temp3,temp4);
-  sub(&temp1, &temp4,&z1);
-  //ここからc
-}
-*/
 
-/*int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
-  NUMBER e, f, m, n, p, q, temp, temp2, ten;
-  int r;
-  setInt(&ten, 10);
-  if(getSign(a) == +1 && getSign(b) == -1) {
-    getAbs(b, &p);
-    r = divide(a, &p, c, d);
-    setSign(c, -1);
-    return r;
-  }
-  if(getSign(a) == -1 && getSign(b) == +1) {
-    getAbs(a, &p);
-    r = divide(&p, b, c, d);
-    setSign(c, -1);
-    setSign(d, -1);
-    return r;
-  }
-  if(getSign(a) == -1 && getSign(b) == -1) {
-    getAbs(a, &p);
-    getAbs(b, &q);
-    r = divide(&p, &q, c, d);
-    setSign(d, -1);
-    return r;
-  }
-  clearByZero(c);
-  clearByZero(d);
-
-  if(isZero(b) == 1) {
-    return -1;
-  }
-
-  copyNumber(a, &n);
-  while(1) {
-    if(numComp(&n, b) < 0) {
-      copyNumber(&n, d);
-      break;
-    }
-    copyNumber(b, &f);
-    setInt(&e, 1);
-    while(1) {
-      copyNumber(&f, &temp2);
-      mulBy10000(&f, &temp);
-      copyNumber(&temp, &f);
-      clearByZero(&temp);
-      if(numComp(&n, &f) != 1) {
-        copyNumber(&temp2, &f);
-        while(1) {
-          copyNumber(&f, &temp2);
-          multiple(&f, &ten, &temp);
-          copyNumber(&temp, &f);
-          clearByZero(&temp);
-          if(numComp(&n, &f) != 1) {
-            break;
-          }
-          multiple(&e, &ten, &temp);
-          copyNumber(&temp, &e);
-          clearByZero(&temp);
-        }
-        copyNumber(&temp2, &f);
-        break;
-      }
-      mulBy10000(&e, &temp);
-      copyNumber(&temp, &e);
-      clearByZero(&temp);
-    }
-    sub(&n, &f, &m);
-    copyNumber(&m, &n);
-    clearByZero(&m);
-    add(c, &e, &m);
-    copyNumber(&m, c);
-    clearByZero(&m);
-  }
-  return 0;
-}
-*/
 
 int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   NUMBER e, f, m, n, p, q, temp, temp2, ten;
@@ -498,7 +372,8 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
     setInt(&e, 1);
     while(1) {
       copyNumber(&f, &temp2);
-      mulBy10000(&f, &temp);
+      //mulBy10000(&f, &temp);
+      mulByN(&f, &temp, SHIFT);
       copyNumber(&temp, &f);
       clearByZero(&temp);
       if(numComp(&n, &f) != 1) {
@@ -518,21 +393,13 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
         copyNumber(&temp2, &f);
         break;
       }
-      mulBy10000(&e, &temp);
+      //mulBy10000(&e, &temp);
+      mulByN(&e, &temp, SHIFT);
       copyNumber(&temp, &e);
       clearByZero(&temp);
     }
     sub(&n, &f, &m);
     copyNumber(&m, &n);
-    /*printf("f = ");
-    dispNumber(&f);
-    printf("\n");
-    printf("e = ");
-    dispNumber(&e);
-    printf("\n");
-    printf("n = ");
-    dispNumber(&n);
-    printf("\n");*/
     clearByZero(&m);
     add(c, &e, &m);
     copyNumber(&m, c);
@@ -540,13 +407,6 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   }
   return 0;
 }
-
-/*
-
-int divide(NUMBER *a, NUMBER *b, NUMBER *c)
-{
-  //逆元をとってmultiple
-}*/
 
 // c = a^b
 int fastpower(NUMBER *a, NUMBER *b, NUMBER *c) {
@@ -579,7 +439,10 @@ int fastpower(NUMBER *a, NUMBER *b, NUMBER *c) {
   clearByZero(&p);
   fastpower(a, &n, &p);
   multiple(a, &p, c);
+  return 0;
 }
+
+
 int sqrt_newton(NUMBER *a, NUMBER *b) {
   NUMBER w, x, y, z, zero, two,three, temp,temp2,temp3,five, tukawanai;
   clearByZero(&w);
@@ -593,8 +456,6 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   setInt(&three, 3);
   setInt(&five, 5000);
 
-  //multiple(a,&five,&temp);
-  //divBy10000(&temp, &w);
   divide(a, &three, &w, &temp); // w = a  / 3
   if(isZero(&w) == 1)
     copyNumber(a, b);
@@ -606,34 +467,14 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   while(1) {
     copyNumber(&x, &y); // y = x
     copyNumber(&w, &x); // x = w
-    // printf("wall1\n");
-    /*printf("a = ");
-    dispNumber(a);
-    printf("\n");
-    printf("x = ");
-    dispNumber(&x);
-    printf("\n");*/
     divide(a, &x, &z, &tukawanai); // z = a / x
-    // printf("z = ");
-    // dispNumber(&z);
-    // printf("\n");
     add(&x, &z, &temp); // temp = b + z
-    /*printf("t = ");
-    dispNumber(&temp);
-    printf("\n");*/
     clearByZero(&z);
-    // printf("wall2\n");
     setInt(&five, 5000);
-    //clearByZero(&temp);
     clearByZero(&temp2);
-    clearByZero(&temp3);
     clearByZero(&w);
     multiple(&temp, &five,&temp2);
     divBy10000(&temp2, &w);
-    //divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
-    /*printf("w = ");
-    dispNumber(&w);
-    printf("\n\n");*/
     if(numComp(&w, &x) == 0)
       break;
     if(numComp(&w, &y) == 0) {
@@ -643,73 +484,8 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
     }
   }
   copyNumber(&w, b);
+  return 0;
 }
-
-/*
-int sqrt_newton(NUMBER *a, NUMBER *b)
-{
-  NUMBER w, x, y, z, zero, two, three,ten, keta, temp, tukawanai;
-  clearByZero(&w);
-  clearByZero(&x);
-  clearByZero(&y);
-  clearByZero(&z);
-  clearByZero(&zero);
-  clearByZero(&two);
-  clearByZero(&temp);
-  setInt(&two, 2);
-  setInt(&three, 3);
-  setInt(&ten, 10);
-  int r = searchKeta(a);
-  setInt(&keta, r);
-  setSign(&keta, -1);
-  if (isZero(&w) == 1)
-    copyNumber(a, b);
-  if (numComp(&w, &zero) < 0)
-    return -1;
-  copyNumber(&w, &x); // x = w
-  copyNumber(&w, &y); //y = w
-
-  while (1)
-  {
-    copyNumber(&x, &y); // y = x
-    copyNumber(&w, &x); // x = w
-    printf("w0 = ");
-    dispNumber(&w);
-    printf("\n\n");
-    fastpower(&w, &three, &temp);
-    multiple(a, &temp, &z);
-    clearByZero(&temp);
-    sub(&three, &z, &temp);
-    clearByZero(&z);
-    divide(&w, &two, &z, &tukawanai);
-    multiple(&temp, &z, &w);
-    clearByZero(&temp);
-    clearByZero(&z);
-   // divide(a, &x, &z, &temp); // z = a / x
-    //printf("z = ");
-    //dispNumber(&z);
-    //printf("\n");
-   // add(&x, &z, &temp); // temp = b + z
-    //printf("temp = ");
-    //dispNumber(&temp);
-    //printf("\n");
-   // divide(&temp, &two, &w, &tukawanai); // w = (b + N / b) / 2
-    printf("w = ");
-    dispNumber(&w);
-    printf("\n\n");
-    if (numComp(&w, &x) == 0)
-      break;
-    if (numComp(&w, &y) == 0)
-    {
-      if (numComp(&x, &w) < 0)
-        copyNumber(&x, &w);
-      break;
-    }
-  }
-  printf("end\n");
-  copyNumber(&w, b);
-}
-*/
 
 int setInt(NUMBER *a, long x) {
   int i = 0;
