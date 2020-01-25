@@ -8,9 +8,9 @@ int salamin(void);
 int wagon(void);
 
 int main(void) {
-  printf("return = %d\n", archimedes());
+  //printf("return = %d\n", archimedes());
   //printf("return = %d\n", machin());
-  //printf("return = %d\n", wagon());
+  printf("return = %d\n", wagon());
   /*NUMBER a,b,c;
   setClear();
   setInt(&a,1739292929);
@@ -215,9 +215,9 @@ int wagon(void){
   clearByZero(&pi);
   clearByZero(&pi2);
   int i;
-  for(i = 1; i < 100000;i++){
-    /*gettimeofday(&tv, NULL);
-    loopstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;*/
+  for(i = 1; i < 1000000;i++){
+    gettimeofday(&tv, NULL);
+    loopstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
     setInt(&n, i);
     clearByZero(&temp);
     fastpower(&n, &three, &temp);
@@ -270,8 +270,8 @@ int wagon(void){
     add(&temp8,&pi2,&temp);
     copyNumber(&temp, &pi2);
     gettimeofday(&tv, NULL);
-    /*loopend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-    printf("loop time = %lf\n", loopend - loopstart);*/
+    loopend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("loop time = %lf\n", loopend - loopstart);
   }
   sqrt_newton(&pi2, &pi);
   printf("pi = ");
