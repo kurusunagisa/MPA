@@ -1,15 +1,13 @@
-// TODO:カラツバ 平方根の逆数を求めてNを掛ける方法 逆数をとる除算
-// MEMO:桁数は上からsearchすればほぼO(1)でできる
 #include "mulprec.h"
 
 int archimedes(void);
-int machin(void);
+int stormer(void);
 int salamin(void);
 int wagon(void);
 
 int main(void) {
   // printf("return = %d\n", archimedes());
-  printf("return = %d\n", machin());
+  printf("return = %d\n", stormer());
   // printf("return = %d\n", wagon());
   // printf("return = %d\n", salamin());
   /*NUMBER a,b,c;
@@ -188,7 +186,7 @@ int archimedes(void) {
     printf("loop time = %lf\n", loopend - loopstart);
     printf("elapsed time = %lf\n", loopend - tstart);
   }
-  printf("an = ");
+  printf("pi = ");
   dispNumber(&an); // 表示
   printf("\n");
   gettimeofday(&tv, NULL);
@@ -196,7 +194,7 @@ int archimedes(void) {
   printf("total time = %lf\n", tend - tstart);
   return 0;
 }
-
+/*
 int wagon(void) {
   struct timeval tv;
   double tstart, tend, loopstart, loopend, nstart, nend;
@@ -351,11 +349,6 @@ int salamin(void) {
     divide(&temp2, &ten, &temp3, &notuse);
     copyNumber(&temp3, &temp2);
     clearByZero(&temp3);
-    /*for(i = 0; i < 3; i++) {
-      divide(&temp2, &ten, &temp3, &notuse);
-      copyNumber(&temp3, &temp2);
-      clearByZero(&temp3);
-    }*/
     printf("temp2 = ");
     dispNumber(&temp2);
     printf("\n");
@@ -397,9 +390,13 @@ int salamin(void) {
   dispNumber(&pi);
   printf("\n");
   return 0;
-}
+}*/
 
-int machin(void) {
+int stormer(void) {
+  struct timeval tv;
+  double tstart, tend;
+  gettimeofday(&tv, NULL);
+  tstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
   NUMBER a0, an, bn, c, two, five, tf, notuse, j, temp, temp2, tanA, tanB, tanC,
       eight, sf, fs, fsfs, four, tsn, tsntsn, left, center, right, ans;
   int i = 0;
@@ -547,8 +544,11 @@ int machin(void) {
   add(&left, &center, &temp);
   add(&temp, &right, &ans);
   // sub(&left, &right, &ans);
-  printf("ans = ");
+  printf("pi = ");
   dispNumber(&ans);
   printf("\n");
+      gettimeofday(&tv, NULL);
+    tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    printf("total time = %lf\n", tend - tstart);
   return 0;
 }
