@@ -30,9 +30,7 @@ void fdispNumber(NUMBER *a, FILE *FP) {
 }
 
 // clear Number by ZERO
-void clearByZero(NUMBER *a) {
-  *a = clear;
-}
+void clearByZero(NUMBER *a) { *a = clear; }
 
 // set a's Signature from s
 int setSign(NUMBER *a, int s) {
@@ -53,14 +51,10 @@ void getAbs(NUMBER *a, NUMBER *b) {
   setSign(b, +1);
 }
 
-void setClear() {
-  setSign(&clear, +1);
-}
+void setClear() { setSign(&clear, +1); }
 
 // copy NUMBER a to b
-void copyNumber(NUMBER *a, NUMBER *b) {
-  *b = *a;
-}
+void copyNumber(NUMBER *a, NUMBER *b) { *b = *a; }
 
 // compare a and b
 int numComp(NUMBER *a, NUMBER *b) {
@@ -169,7 +163,7 @@ int mulByN(NUMBER *a, NUMBER *b, int N) {
     b->n[i + N] = a->n[i];
   }
   setSign(b, getSign(a));
-  for(i = 0;i < N;i++){
+  for(i = 0; i < N; i++) {
     b->n[i] = 0;
   }
   if(a->n[0] != 0) {
@@ -330,7 +324,6 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   return 0;
 }
 
-
 int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   NUMBER e, f, m, n, p, q, temp, temp2, ten;
   int r;
@@ -372,7 +365,7 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
     setInt(&e, 1);
     while(1) {
       copyNumber(&f, &temp2);
-      //mulBy10000(&f, &temp);
+      // mulBy10000(&f, &temp);
       mulByN(&f, &temp, SHIFT);
       copyNumber(&temp, &f);
       clearByZero(&temp);
@@ -393,7 +386,7 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
         copyNumber(&temp2, &f);
         break;
       }
-      //mulBy10000(&e, &temp);
+      // mulBy10000(&e, &temp);
       mulByN(&e, &temp, SHIFT);
       copyNumber(&temp, &e);
       clearByZero(&temp);
@@ -408,43 +401,8 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   return 0;
 }
 
-// c = a^b
-int fastpower(NUMBER *a, NUMBER *b, NUMBER *c) {
-  int x = 0;
-  NUMBER n;
-  NUMBER m;
-  NUMBER o;
-  NUMBER p;
-  clearByZero(c);
-  clearByZero(&n);
-  clearByZero(&m);
-  clearByZero(&o);
-  clearByZero(&p);
-  getInt(b, &x);
-  if(x == 0) {
-    setInt(c, +1);
-  }
-  if(x == 1) {
-    copyNumber(a, c);
-    return x;
-  }
-  if(x % 2 == 0) {
-    copyNumber(a, &n);
-    multiple(a, &n, &m);
-    setInt(&o, x / 2);
-    clearByZero(&p);
-    fastpower(&m, &o, &p);
-  }
-  decrement(b, &n);
-  clearByZero(&p);
-  fastpower(a, &n, &p);
-  multiple(a, &p, c);
-  return 0;
-}
-
-
 int sqrt_newton(NUMBER *a, NUMBER *b) {
-  NUMBER w, x, y, z, zero, two,three, temp,temp2,temp3,five, tukawanai;
+  NUMBER w, x, y, z, zero, two, three, temp, temp2, five, tukawanai;
   clearByZero(&w);
   clearByZero(&x);
   clearByZero(&y);
@@ -465,15 +423,15 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   copyNumber(&w, &y); // y = w
 
   while(1) {
-    copyNumber(&x, &y); // y = x
-    copyNumber(&w, &x); // x = w
+    copyNumber(&x, &y);            // y = x
+    copyNumber(&w, &x);            // x = w
     divide(a, &x, &z, &tukawanai); // z = a / x
-    add(&x, &z, &temp); // temp = b + z
+    add(&x, &z, &temp);            // temp = b + z
     clearByZero(&z);
     setInt(&five, 5000);
     clearByZero(&temp2);
     clearByZero(&w);
-    multiple(&temp, &five,&temp2);
+    multiple(&temp, &five, &temp2);
     divBy10000(&temp2, &w);
     if(numComp(&w, &x) == 0)
       break;
@@ -507,20 +465,23 @@ int setInt(NUMBER *a, long x) {
   }
 }
 
-int getInt(NUMBER *a, int *x) {
-  int i;
-  long temp = 1;
-  *x = 0;
-  for(i = 0; i < 9; i++) {
-    if(*x > INT32_MAX - (a->n[i] * temp)) {
-      return -1;
-    } else {
-      *x += a->n[i] * temp;
-      temp *= RADIX;
+int factorial(NUMBER *a, NUMBER *b) {
+  NUMBER c, d, e, f;
+  copyNumber(a, &d);
+  while(1){
+    clearByZero(&c);
+    clearByZero(&e);
+    clearByZero(&f);
+    if(isZero(b) == 1) {
+      copyNumber(&d, b);
     }
+    copyNumber(&d, &c);
+    decrement(&c, &d);
+    if(isZero(&d) == 1) {
+      return 0;
+    }
+    multiple(b, &d, &e);
+    copyNumber(&e, b);
   }
-  if(getSign(a) != 1) {
-    *x -= *x * 2;
-  }
-  return 0;
+  //factorial(&d, b);
 }

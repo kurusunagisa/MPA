@@ -4,12 +4,14 @@ int archimedes(void);
 int stormer(void);
 int salamin(void);
 int wagon(void);
+int neipia(void);
 
 int main(void) {
   // printf("return = %d\n", archimedes());
   printf("return = %d\n", stormer());
   // printf("return = %d\n", wagon());
   // printf("return = %d\n", salamin());
+  // printf("return = %d\n", neipia());
   /*NUMBER a,b,c;
   setClear();
   setInt(&a,1739292929);
@@ -104,7 +106,7 @@ int main(void) {
 
 int archimedes(void) {
   struct timeval tv;
-  double tstart, tend, loopstart, loopend, nstart, nend;
+  double tstart, tend;
   gettimeofday(&tv, NULL);
   tstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
   NUMBER a0, b0, an, bn, anext, bnext, two, three, temp, temp2, temp3, modulo;
@@ -151,28 +153,20 @@ int archimedes(void) {
   gettimeofday(&tv, NULL);
   tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
   printf("ready time = %lf\n", tend - tstart);
-  while(i < DIGIT * 10) { // 何かしらのwhile文
-    gettimeofday(&tv, NULL);
-    loopstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-    printf("n = %d : \n", i);
+  while(i < DIGIT * 10) {         // 何かしらのwhile文
     multiple(&an, &two, &temp);   // 2 * anを計算
-    multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算 ->
+    multiple(&temp, &bn, &temp2); // (2 * an) * bnを計算
     add(&an, &bn, &temp3);        // an + bnを計算
     divide(&temp2, &temp3, &anext,
-           &modulo); // (an * 2 *  bn) / (an + bn)を計算してanextに代入
+           &modulo); // (2 * an *  bn) / (an + bn)を計算してanextに代入
     clearByZero(&temp);
     clearByZero(&temp2);
     clearByZero(&temp3);
-    multiple(&anext, &bn, &temp); // anext * bnを計算
-    if(numComp(&anext, &an) == 0) {
+    if(numComp(&anext, &an) == 0) { // anが収束したときwhile内から抜ける
       break;
     }
-    gettimeofday(&tv, NULL);
-    nstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+    multiple(&anext, &bn, &temp); // anext * bnを計算
     sqrt_newton(&temp, &bnext); // squareroot(anext * bn)を計算してbnextに代入
-    gettimeofday(&tv, NULL);
-    nend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-    printf("newton time = %lf\n", nend - nstart);
     copyNumber(&anext, &an); // anextをanにコピー
     copyNumber(&bnext, &bn); // bnextをbnにコピー
     clearByZero(&anext);
@@ -181,11 +175,8 @@ int archimedes(void) {
     clearByZero(&temp2);
     clearByZero(&temp3);
     i++; // インクリメント
-    gettimeofday(&tv, NULL);
-    loopend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-    printf("loop time = %lf\n", loopend - loopstart);
-    printf("elapsed time = %lf\n", loopend - tstart);
   }
+  printf("n = %d : \n", i);
   printf("pi = ");
   dispNumber(&an); // 表示
   printf("\n");
@@ -397,7 +388,7 @@ int stormer(void) {
   double tstart, tend;
   gettimeofday(&tv, NULL);
   tstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-  NUMBER a0, an, bn, c, two, five, tf, notuse, j, temp, temp2, tanA, tanB, tanC,
+  NUMBER a0, an, bn, c, two,  tf, notuse, j, temp, temp2, tanA, tanB, tanC,
       eight, sf, fs, fsfs, four, tsn, tsntsn, left, center, right, ans;
   int i = 0;
   setClear();
@@ -423,13 +414,7 @@ int stormer(void) {
   setInt(&j, 3);
   setInt(&four, 4);
   mulByN(&a0, &c, DIGIT);
-  printf("c = ");
-  dispNumber(&c);
-  printf("\n");
   divide(&c, &eight, &an, &notuse);
-  printf("an = ");
-  dispNumber(&an);
-  printf("\n");
   copyNumber(&an, &bn);
   while(1) {
     divide(&an, &sf, &temp, &notuse);
@@ -528,27 +513,56 @@ int stormer(void) {
     clearByZero(&temp);
   }
   copyNumber(&bn, &tanC);
-
-  printf("tanA = ");
-  dispNumber(&tanA);
-  printf("\n");
-  printf("tanB = ");
-  dispNumber(&tanB);
-  printf("\n");
-  printf("tanC = ");
-  dispNumber(&tanC);
-  printf("\n");
   multiple(&tanA, &tf, &left);
   multiple(&tanB, &eight, &center);
   multiple(&tanC, &four, &right);
   add(&left, &center, &temp);
   add(&temp, &right, &ans);
-  // sub(&left, &right, &ans);
   printf("pi = ");
   dispNumber(&ans);
   printf("\n");
-      gettimeofday(&tv, NULL);
-    tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
-    printf("total time = %lf\n", tend - tstart);
+  gettimeofday(&tv, NULL);
+  tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+  printf("total time = %lf\n", tend - tstart);
+  return 0;
+}
+
+int neipia(void) {
+  struct timeval tv;
+  double tstart, tend;
+  gettimeofday(&tv, NULL);
+  tstart = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+  setClear();
+  NUMBER a, b, c, d, e, notuse, temp, temp2, temp3;
+  setInt(&a, 1);
+  mulByN(&a, &c, DIGIT);
+  setInt(&b, 1);
+  mulByN(&a, &e, DIGIT);
+  while(1) {
+    clearByZero(&d);
+    factorial(&b, &d);
+    divide(&c, &d, &temp2, &notuse);
+    if(isZero(&temp2) == 1) {
+      break;
+    }
+    add(&e, &temp2, &temp3);
+    copyNumber(&temp3, &e);
+    clearByZero(&temp2);
+    clearByZero(&temp3);
+    increment(&b, &temp);
+    copyNumber(&temp, &b);
+    clearByZero(&temp);
+  }
+  printf("e = ");
+  dispNumber(&e);
+  printf("\n");
+  clearByZero(&d);
+  sqrt_newton(&e, &d);
+  printf("sqrt(e) = ");
+  dispNumber(&d);
+  printf("\n");
+  gettimeofday(&tv, NULL);
+  tend = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
+  printf("total time = %lf\n", tend - tstart);
   return 0;
 }
