@@ -7,9 +7,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define DIGIT 250 //77
-#define KETA DIGIT + 2 // 4
-#define SHIFT 2  //2
+#define DIGIT 77
+#define KETA DIGIT * 4
+#define SHIFT 1
 #define RADIX 10000
 
 typedef struct {
@@ -42,6 +42,5 @@ int decrement(NUMBER *, NUMBER *);
 int multiple(NUMBER *, NUMBER *, NUMBER *);
 int divide(NUMBER *, NUMBER *, NUMBER *, NUMBER *);
 int sqrt_newton(NUMBER *, NUMBER *);
-int factorial(NUMBER *, NUMBER *);
 // 変換系
 int setInt(NUMBER *, long);

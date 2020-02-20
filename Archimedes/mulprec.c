@@ -46,17 +46,20 @@ int setSign(NUMBER *a, int s) {
 // return a's Signature
 int getSign(NUMBER *a) { return a->sign == +1 ? +1 : -1; }
 
+// b is a's abs
 void getAbs(NUMBER *a, NUMBER *b) {
   copyNumber(a, b);
   setSign(b, +1);
 }
 
+// clearの符号を+にする
 void setClear() { setSign(&clear, +1); }
 
 // copy NUMBER a to b
 void copyNumber(NUMBER *a, NUMBER *b) { *b = *a; }
 
 // compare a and b
+// a > b ... 1 : a == b ... 0 : a < b ... -1
 int numComp(NUMBER *a, NUMBER *b) {
   int i;
   if(getSign(a) != getSign(b)) {
@@ -107,6 +110,8 @@ void swap(NUMBER *a, NUMBER *b) {
   setSign(b, c.sign);
 }
 
+// 構造体aが0か確認する
+// a == 0 ... 1 : a != 0 ... 0
 int isZero(NUMBER *a) {
   int i;
   for(i = 0; i < KETA; i++) {
@@ -117,6 +122,7 @@ int isZero(NUMBER *a) {
   return 1;
 }
 
+// 構造体aの桁数を探す
 int searchKeta(NUMBER *a) {
   int i;
   for(i = KETA - 1; i >= 0; i--) {
@@ -157,6 +163,7 @@ int divBy10000(NUMBER *a, NUMBER *b) {
   }
 }
 
+//mulBy10000を何回も実行する動作と同じ動作を一気に行う関数
 int mulByN(NUMBER *a, NUMBER *b, int N) {
   int i;
   for(i = 0; i < KETA - 1; i++) {
@@ -173,6 +180,7 @@ int mulByN(NUMBER *a, NUMBER *b, int N) {
   }
 }
 
+// 足し算
 int add(NUMBER *a, NUMBER *b, NUMBER *c) {
   unsigned long i, e = 0, d;
   NUMBER x, y;
@@ -200,6 +208,7 @@ int add(NUMBER *a, NUMBER *b, NUMBER *c) {
   return e != 0 ? -1 : 0;
 }
 
+// 引き算
 int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
   int i, flag = 0, flag2 = 0;
   long ai, bi;
@@ -252,6 +261,7 @@ int sub(NUMBER *a, NUMBER *b, NUMBER *c) {
   return h != 0 ? -1 : 0;
 }
 
+// b = a + 1
 int increment(NUMBER *a, NUMBER *b) {
   NUMBER one;
   int r;
@@ -260,6 +270,7 @@ int increment(NUMBER *a, NUMBER *b) {
   return r;
 }
 
+//b = a - 1
 int decrement(NUMBER *a, NUMBER *b) {
   NUMBER one;
   int r;
@@ -268,6 +279,7 @@ int decrement(NUMBER *a, NUMBER *b) {
   return r;
 }
 
+//c = a * b
 int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   int i = 0, j = 0, r;
   unsigned long aj, e, bi, h = 0;
@@ -296,7 +308,7 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
     bi = b->n[i];
     h = 0;
     clearByZero(&d);
-    if(bi == 0) {
+    if(bi == 0) { //掛けられる側が0の場合特別扱いをする
       for(j = 0; j < ki; j++) {
         d.n[j + i] = 0;
       }
@@ -324,6 +336,7 @@ int multiple(NUMBER *a, NUMBER *b, NUMBER *c) {
   return 0;
 }
 
+// a / b = c ... d
 int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   NUMBER e, f, m, n, p, q, temp, temp2, ten;
   int r;
@@ -365,7 +378,6 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
     setInt(&e, 1);
     while(1) {
       copyNumber(&f, &temp2);
-      // mulBy10000(&f, &temp);
       mulByN(&f, &temp, SHIFT);
       copyNumber(&temp, &f);
       clearByZero(&temp);
@@ -386,7 +398,6 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
         copyNumber(&temp2, &f);
         break;
       }
-      // mulBy10000(&e, &temp);
       mulByN(&e, &temp, SHIFT);
       copyNumber(&temp, &e);
       clearByZero(&temp);
@@ -401,6 +412,7 @@ int divide(NUMBER *a, NUMBER *b, NUMBER *c, NUMBER *d) {
   return 0;
 }
 
+//aの平方根を求める関数
 int sqrt_newton(NUMBER *a, NUMBER *b) {
   NUMBER w, x, y, z, zero, two, three, temp, temp2, five, tukawanai;
   clearByZero(&w);
@@ -431,8 +443,8 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
     setInt(&five, 5000);
     clearByZero(&temp2);
     clearByZero(&w);
-    multiple(&temp, &five, &temp2);
-    divBy10000(&temp2, &w);
+    multiple(&temp, &five, &temp2); //temp2 = temp * 5000
+    divBy10000(&temp2, &w); // (temp * 5000) / 10000 = temp / 2
     if(numComp(&w, &x) == 0)
       break;
     if(numComp(&w, &y) == 0) {
@@ -445,6 +457,7 @@ int sqrt_newton(NUMBER *a, NUMBER *b) {
   return 0;
 }
 
+//整数を多倍長の形にする
 int setInt(NUMBER *a, long x) {
   int i = 0;
   if(x < 0) {
@@ -463,25 +476,4 @@ int setInt(NUMBER *a, long x) {
   } else {
     return -1;
   }
-}
-
-int factorial(NUMBER *a, NUMBER *b) {
-  NUMBER c, d, e, f;
-  copyNumber(a, &d);
-  while(1){
-    clearByZero(&c);
-    clearByZero(&e);
-    clearByZero(&f);
-    if(isZero(b) == 1) {
-      copyNumber(&d, b);
-    }
-    copyNumber(&d, &c);
-    decrement(&c, &d);
-    if(isZero(&d) == 1) {
-      return 0;
-    }
-    multiple(b, &d, &e);
-    copyNumber(&e, b);
-  }
-  //factorial(&d, b);
 }
