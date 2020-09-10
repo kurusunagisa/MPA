@@ -7,8 +7,8 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define DIGIT 77
-#define KETA DIGIT * 4
+#define DIGIT 250
+#define KETA DIGIT * 2
 #define SHIFT 1
 #define RADIX 10000
 
